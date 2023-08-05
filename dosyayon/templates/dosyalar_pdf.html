@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dosyalar List</title>
+    <!-- Add any necessary CSS styling here -->
+</head>
+<body>
+    <h1>Dosyalar List</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>DosyaID</th>
+                <th>DosyaYil</th>
+                <th>DosyaNo</th>
+                <!-- Add other columns as needed -->
+            </tr>
+        </thead>
+        <tbody>
+            {% for dosya in dosyalar_list %}
+                <tr>
+                    <td>{{ dosya.DosyaID }}</td>
+                    <td>{{ dosya.DosyaYil }}</td>
+                    <td>{{ dosya.DosyaNo }}</td>
+                    <!-- Add other fields as needed -->
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
