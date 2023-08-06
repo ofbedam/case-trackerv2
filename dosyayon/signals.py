@@ -1,15 +1,13 @@
 # dosyayon/signals.py
-import time
+from django.apps import apps
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from ulkeler.models import Ulkeler
 
-@receiver(post_migrate)
+@receiver(post_migrate, sender=apps.get_app_config('ulkeler'))
 def create_initial_data(sender, **kwargs):
-    if sender.name == 'dosyayon':
-
-
-
+    # Check if the 'Ulkeler' table is empty
+    if Ulkeler.objects.count() == 0:
         # List of countries
         ulke_list = [
             'ABD Virjin Adaları (ABD)',
@@ -269,28 +267,16 @@ def create_initial_data(sender, **kwargs):
             'Yeşil Burun Adaları',
         ]
 
-        # Check if the 'Ulkeler' table is empty
-    if Ulkeler.objects.count() == 0:
         max_retry = 3  # Set the maximum number of retries
         retry_count = 0
 
         while retry_count < max_retry:
             try:
-                # Create Ulkeler instances
                 for ulke in ulke_list:
                     Ulkeler.objects.create(UlkeAdi=ulke)
+                break  # Exit the loop if data creation is successful
 
-                # Break the loop if the import is successful
-                break
             except Exception as e:
-                # Catch the exception
-                print(f"Error importing 'ulkeler' data: {e}")
                 retry_count += 1
-
-                if retry_count < max_retry:
-                    # If we haven't reached the maximum retry count, wait for a short time before retrying
-                    print("Retrying...")
-                    time.sleep(5)  # Wait for 5 seconds before retrying
-                else:
-                    # If we reach the maximum retry count, raise the error to handle it in your application
-                    raise e
+                if retry_count >= max_retry:
+                    raise  # Raise the exception if the maximum retry count is reached

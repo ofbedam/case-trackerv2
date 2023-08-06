@@ -37,16 +37,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'ulkeler',
     'dosyayon',  # Burada issue_management uygulamasını ekleyin
-    'dal',
-    'dal.autocomplete',
-    'dal_select2',
+    'ulkeler',
     'cocuklar',
     'dosyalar',
     'kisiler',
     'cocukkisileri',
     'yasaltemsilciler',
+    'dal',
+    'dal.autocomplete',
+    'dal_select2',
 
 ]
 

@@ -6,4 +6,5 @@ class DosyayonConfig(AppConfig):
     name = 'dosyayon'
 
     def ready(self):
-        import dosyayon.signals
+        # Register the signal handler
+        import dosyayon.signals  # Importing here to avoid circular import
