@@ -8,6 +8,8 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
 from kisiler.models import Kisiler
+from django.views.generic import ListView
+from dosyalar.models import Dosyalar
 
 class KisilerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
@@ -45,3 +47,7 @@ def generate_pdf(request):
         p.save()
 
         return response
+
+
+
+

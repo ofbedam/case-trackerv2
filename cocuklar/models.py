@@ -2,6 +2,8 @@
 from django.db import models
 from kisiler.models import Kisiler
 from ulkeler.models import Ulkeler
+from datetime import date, timedelta
+from dateutil.relativedelta import relativedelta
 class Cocuklar(models.Model):
     CocukID = models.AutoField(primary_key=True)
     Adi = models.CharField(max_length=100)
@@ -29,3 +31,55 @@ class Cocuklar(models.Model):
         db_table = 'Cocuklar'
 
 
+ # Method to calculate age
+    def calculate_age1(self):
+        if self.DogumTarihi:
+            today = date.today()
+            age1 = today.year - self.DogumTarihi.year - ((today.month, today.day) < (self.DogumTarihi.month, self.DogumTarihi.day))
+            return age1
+        return None
+
+    # Or use @property decorator to create a property
+    @property
+    def age2(self):
+        if self.DogumTarihi:
+            today = date.today()
+            age2 = today.year - self.DogumTarihi.year - ((today.month, today.day) < (self.DogumTarihi.month, self.DogumTarihi.day))
+            return age2
+        return None
+
+        # Method to calculate age in "X years, Y months, Z days" format
+
+    def calculate_age(self):
+        if self.DogumTarihi:
+            today = date.today()
+            age = today.year - self.DogumTarihi.year - (
+                        (today.month, today.day) < (self.DogumTarihi.month, self.DogumTarihi.day))
+
+            birth_month = self.DogumTarihi.month
+            birth_day = self.DogumTarihi.day
+
+            if today.month < birth_month or (today.month == birth_month and today.day < birth_day):
+                age -= 1
+                months = (today.month + 12) - birth_month
+            else:
+                months = today.month - birth_month
+
+            days = today.day - birth_day
+            if days < 0:
+                months -= 1
+                days += 30  # Assuming every month has 30 days for simplicity
+
+            return f"{age} years, {months} months, {days} days"
+        return None
+
+        # Method to calculate the date when the Cocuk reaches 16 years old
+
+
+    def Yas16_Tarih(self):
+            if self.DogumTarihi:
+                return self.DogumTarihi + relativedelta(years=16)
+
+    def Yas19_Tarih(self):
+                if self.DogumTarihi:
+                    return self.DogumTarihi + relativedelta(years=19)

@@ -2,7 +2,10 @@ from django.contrib import admin
 from django import forms
 
 from dal import autocomplete
-
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 from dosyalar.models import Dosyalar
 from kisiler.models import Kisiler
 
@@ -83,6 +86,8 @@ class DosyalarAdmin(admin.ModelAdmin):
         for dosya in queryset:
             p.drawString(100, 700, f"Dosya ID: {dosya.DosyaID}")
             p.drawString(100, 680, f"DosyaYil: {dosya.DosyaYil}")
+            p.drawString(100, 680, f"DosyaYil: {dosya.DosyaYil}")
+
             # Add more fields as needed...
 
             # Move to the next page

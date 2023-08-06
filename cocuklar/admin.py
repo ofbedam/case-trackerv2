@@ -2,6 +2,10 @@ from django.contrib import admin
 from django import forms
 from cocuklar.models import Cocuklar
 from dal import autocomplete
+from django.urls import reverse
+from django.utils.html import format_html
+
+
 # Register your models here.
 
 
@@ -15,6 +19,8 @@ class CocuklarAdminForm(forms.ModelForm):
             'BabaAdi': autocomplete.ModelSelect2(url='kisiler-autocomplete'),
         }
 
+
+
 # Register CocuklarAdmin with the customized form
 class CocuklarAdmin(admin.ModelAdmin):
     form = CocuklarAdminForm
@@ -23,6 +29,11 @@ class CocuklarAdmin(admin.ModelAdmin):
     def dosyalar_list(self, obj):
         return ", ".join([str(dosya) for dosya in obj.dosyalar.all()])
 
-    list_display = ['Adi', 'Soyadi', 'dosyalar_list']
+    list_display = ['CocukID', 'Adi', 'Soyadi', 'DogumTarihi', 'calculate_age', 'calculate_age1', 'age2', 'Yas16_Tarih',
+                'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'UlkesiID',
+                'dosyalar_list']  # Add 'age' or 'calculate_age' to display the age
+
+
+
 
 admin.site.register(Cocuklar, CocuklarAdmin)

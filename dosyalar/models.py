@@ -30,7 +30,7 @@ class Dosyalar(models.Model):
 
     def __str__(self):
         cocuklar_list = ", ".join([cocuk.__str__() for cocuk in self.Cocuklar.all()])
-        return f"DosyaID: {self.DosyaID}, DosyaYil: {self.DosyaYil}, DosyaNo: {self.DosyaNo}, DosyaTür: {self.DosyaTuru}, Cocuklar: {cocuklar_list}"
+        return f"DosyaID: {self.DosyaID}, DosyaYil: {self.DosyaYil}, DosyaNo: {self.DosyaNo}, DosyaTür: {self.DosyaTuru},  Durum: {self.DosyaDurumu},Cocuklar: {cocuklar_list}"
     class Meta:
         unique_together = [['DosyaYil', 'DosyaNo']]
         db_table = 'Dosyalar'
