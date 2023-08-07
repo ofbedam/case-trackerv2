@@ -3,6 +3,7 @@ from django.apps import apps
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from ulkeler.models import Ulkeler
+from kurumlar.models import KurumTurleri
 
 @receiver(post_migrate, sender=apps.get_app_config('ulkeler'))
 def create_initial_data(sender, **kwargs):
@@ -274,6 +275,44 @@ def create_initial_data(sender, **kwargs):
             try:
                 for ulke in ulke_list:
                     Ulkeler.objects.create(UlkeAdi=ulke)
+                break  # Exit the loop if data creation is successful
+
+            except Exception as e:
+                retry_count += 1
+                if retry_count >= max_retry:
+                    raise  # Raise the exception if the maximum retry count is reached
+
+@receiver(post_migrate, sender=apps.get_app_config('kurumlar'))
+def create_initial_data(sender, **kwargs):
+    # Check if the 'Kurumturleri' table is empty
+    if KurumTurleri.objects.count() == 0:
+        # List of kurumturleri
+        kurumturu_list = [
+            '1980 Merkezi Makam',
+            '1996 Merkezi Makam',
+            '1980 Velayet Merkezi Makam',
+            'Adalet Bakanlığı',
+            'Dışişleri Bakanlığı',
+            'İçişleri Bakanlığı',
+            'Aile Bakanlığı',
+            '... Bakanlığı',
+            'Savcılık',
+            'Aile Mahkemesi',
+            'Asliye Hukuk Mahkemesi',
+            'Sulh Hukuk Mahkemesi',
+            'Bölge Adliye Mahkemesi',
+            'İcra Müdürlüğü',
+            'Yargıtay',
+            'Mahkemesi',
+        ]
+
+        max_retry = 10  # Set the maximum number of retries
+        retry_count = 0
+
+        while retry_count < max_retry:
+            try:
+                for kurumturadi in kurumturu_list:
+                    KurumTurleri.objects.create(TurAdi=kurumturadi)
                 break  # Exit the loop if data creation is successful
 
             except Exception as e:

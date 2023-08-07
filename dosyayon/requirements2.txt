@@ -1,0 +1,14 @@
+asgiref==3.7.2
+django-autocomplete-light==3.9.7
+django-clearcache==1.2.1
+Django==4.2.3
+mysqlclient==2.2.0
+Pillow==10.0.0
+pip==22.3.1
+python-dateutil==2.8.2
+reportlab==4.0.4
+setuptools==65.5.1
+six==1.16.0
+sqlparse==0.4.4
+tzdata==2023.3
+wheel==0.41.1

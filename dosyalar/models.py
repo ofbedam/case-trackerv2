@@ -3,6 +3,8 @@ from django.db import models
 from ulkeler.models import Ulkeler
 from kisiler.models import Kisiler
 from cocuklar.models import Cocuklar
+
+
 # Create your models here.
 
 
@@ -11,18 +13,34 @@ class Dosyalar(models.Model):
     DosyaYil = models.IntegerField()
     DosyaNo = models.IntegerField()
     Aciklama = models.TextField()
-    DosyaTuru = models.CharField(max_length=20, choices=[('1980 ÇK', '1980 ÇK'), ('1996', '1996'), ('1980 Velayet', '1980 Velayet'), ('Bilgi', 'Bilgi')])
+    DosyaTuru = models.CharField(verbose_name='Tür', max_length=20,
+                                 choices=[('1980 ÇK', '1980 ÇK'), ('1996', '1996'), ('1980 Velayet', '1980 Velayet'),
+                                          ('Bilgi', 'Bilgi')])
     DosyaAcilisTarihi = models.DateField()
     DosyaKapatmaTarihi = models.DateField(null=True, blank=True)
     DosyaDurumu = models.CharField(max_length=10, choices=[('Açık', 'Açık'), ('Kapalı', 'Kapalı'), ('Arşiv', 'Arşiv')])
-    GonderenUlkeID = models.ForeignKey(Ulkeler, on_delete=models.CASCADE, verbose_name='Gönderen Ülke', db_column='GonderenUlkeID', related_name='gonderen_dosyalar')
-    YerineGetirenUlkeID = models.ForeignKey(Ulkeler, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke', db_column='YerineGetirenUlkeID', related_name='yerine_getiren_dosyalar')
+    GonderenUlkeID = models.ForeignKey(Ulkeler, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',
+                                       db_column='GonderenUlkeID', related_name='gonderen_dosyalar')
+    YerineGetirenUlkeID = models.ForeignKey(Ulkeler, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
+                                            db_column='YerineGetirenUlkeID', related_name='yerine_getiren_dosyalar')
     TalepEdenKurumTarih = models.DateField(null=True, blank=True)
     TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
     basvurucu = models.ForeignKey(Kisiler, related_name='dosyalar_basvurucu', on_delete=models.CASCADE,
                                   verbose_name='Başvurucu', db_column='basvurucu_id', null=True, blank=True)
+
+    BasvurucununCocugaYakinliği = models.CharField(null=True, blank=True, max_length=20, choices=[('Anne', 'Anne'), ('Baba', 'Baba'),
+                                                                           ('Büyükanne/baba', 'Büyükanne/baba'),
+                                                                           ('Diğer Akraba', 'Diğer Akraba'),
+                                                                           ('Vasi', 'Vasi'), ('Kurum', 'Kurum'),
+                                                                           ('Diğer', 'Diğer'), ])
     karsi_taraf = models.ForeignKey(Kisiler, related_name='dosyalar_karsi_taraf', on_delete=models.CASCADE,
                                     verbose_name='Karşı Taraf', db_column='karsi_taraf_id', null=True, blank=True)
+    KarsiTarafinCocugaYakinliği = models.CharField(null=True, blank=True,max_length=20, choices=[('Anne', 'Anne'), ('Baba', 'Baba'),
+                                                                           ('Büyükanne/baba', 'Büyükanne/baba'),
+                                                                           ('Diğer Akraba', 'Diğer Akraba'),
+                                                                           ('Vasi', 'Vasi'), ('Kurum', 'Kurum'),
+                                                                           ('Diğer', 'Diğer'), ])
+
 
 
     # Add ManyToManyField for Cocuklar
@@ -31,9 +49,11 @@ class Dosyalar(models.Model):
     def __str__(self):
         cocuklar_list = ", ".join([cocuk.__str__() for cocuk in self.Cocuklar.all()])
         return f"DosyaID: {self.DosyaID}, DosyaYil: {self.DosyaYil}, DosyaNo: {self.DosyaNo}, DosyaTür: {self.DosyaTuru},  Durum: {self.DosyaDurumu},Cocuklar: {cocuklar_list}"
+
     class Meta:
         unique_together = [['DosyaYil', 'DosyaNo']]
         db_table = 'Dosyalar'
+
     def save(self, *args, **kwargs):
         if not self.DosyaID:
             # Check if there are existing records with the same DosyaYil
@@ -70,5 +90,3 @@ class Dosyalar(models.Model):
 #            managed = False
 #         db_table = 'Dosyalar'
 #
-
-
