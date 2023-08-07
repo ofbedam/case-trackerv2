@@ -47,7 +47,8 @@ INSTALLED_APPS = [
     'dal',
     'dal.autocomplete',
     'dal_select2',
-    'kurumlar'
+    'kurumlar',
+    'yerler'
 ]
 
 MIDDLEWARE = [
