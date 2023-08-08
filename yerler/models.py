@@ -52,10 +52,12 @@ class State(models.Model):
         db_table = 'states'
 
     def __str__(self):
-        return f"{self.name} {self.country}"
+        return self.name
+        # return f"{self.name} {self.country}"
     class Meta:
         managed = False
         db_table = 'states'
+
 class City(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255)
@@ -71,8 +73,9 @@ class City(models.Model):
     wikidataid = models.CharField(db_column='wikiDataId', max_length=255, blank=True, null=True, db_comment='Rapid API GeoDB Cities')  # Field name made lowercase.
 
     def __str__(self):
-        return f"{self.name}  / {self.state}/ {self.country}"
+        # return f"{self.name}  / {self.state}/ {self.country}"
 
+        return self.name
     class Meta:
         managed = False
         db_table = 'cities'

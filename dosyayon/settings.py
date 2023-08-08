@@ -96,7 +96,7 @@ WSGI_APPLICATION = 'dosyayon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'casetracker_01',
+        'NAME': 'casetracker2',
         'USER': 'user1',
         'PASSWORD': '123456',
         'HOST': 'localhost',

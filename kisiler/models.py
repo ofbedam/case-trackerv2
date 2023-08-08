@@ -1,6 +1,7 @@
 from django.db import models
 from yasaltemsilciler.models import YasalTemsilciler
 from ulkeler.models import Ulkeler
+from yerler.models import Country
 # Create your models here.
 
 
@@ -17,7 +18,7 @@ class Kisiler(models.Model):
     Eposta = models.EmailField(max_length=100, blank=True, null=True)
     YasalTemsilciID = models.ForeignKey(YasalTemsilciler, on_delete=models.CASCADE, verbose_name='Yasal Temsilci', db_column='YasalTemsilciID', related_name='kisiler', blank=True, null=True)
     Notlar = models.TextField(blank=True, null=True)
-    UlkesiID = models.ForeignKey(Ulkeler, on_delete=models.CASCADE, verbose_name='Ülke Adı', db_column='UlkesiID')
+    UlkesiID = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Ülke Adı', db_column='UlkesiID')
 
     def __str__(self):
         return self.Adi + ' ' + self.Soyadi

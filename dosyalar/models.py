@@ -3,7 +3,7 @@ from django.db import models
 from ulkeler.models import Ulkeler
 from kisiler.models import Kisiler
 from cocuklar.models import Cocuklar
-
+from yerler.models import Country
 
 # Create your models here.
 
@@ -19,9 +19,9 @@ class Dosyalar(models.Model):
     DosyaAcilisTarihi = models.DateField()
     DosyaKapatmaTarihi = models.DateField(null=True, blank=True)
     DosyaDurumu = models.CharField(max_length=10, choices=[('Açık', 'Açık'), ('Kapalı', 'Kapalı'), ('Arşiv', 'Arşiv')])
-    GonderenUlkeID = models.ForeignKey(Ulkeler, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',
+    GonderenUlkeID = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',
                                        db_column='GonderenUlkeID', related_name='gonderen_dosyalar')
-    YerineGetirenUlkeID = models.ForeignKey(Ulkeler, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
+    YerineGetirenUlkeID = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
                                             db_column='YerineGetirenUlkeID', related_name='yerine_getiren_dosyalar')
     TalepEdenKurumTarih = models.DateField(null=True, blank=True)
     TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
