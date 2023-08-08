@@ -1,0 +1,47 @@
+#/templates/admin/kurumlar_change_form.html
+
+<html>
+<head>
+{% extends "admin/change_form.html" %}
+{% load static %}
+{% load smart_selects_js %}
+{% block extrahead %}
+{{ block.super }}
+<script src="{% static 'js/jquery.min.js' %}"></script>
+<script src="{% static 'js/chained_dropdown.js' %}"></script>
+{% endblock %}
+</head>
+<body>
+{% block content %}
+{{ block.super }}
+<div id="chained-dropdown-container">
+  <label for="id_country">Country:</label>
+  <select id="id_country" name="country">
+    <option value="">---------</option>
+    <!-- Add options for countries here -->
+  </select>
+
+  <label for="id_state">State:</label>
+  <select id="id_state" name="state">
+    <option value="">---------</option>
+    <!-- Add options for states here -->
+  </select>
+
+  <label for="id_city">City:</label>
+  <select id="id_city" name="city">
+    <option value="">---------</option>
+    <!-- Add options for cities here -->
+  </select>
+</div>
+
+<script>
+$(document).ready(function() {
+  // Initialize chained dropdowns
+  initChainedDropdowns();
+});
+</script>
+{% endblock %}
+
+{% smart_selects_js %}
+</body>
+</html>

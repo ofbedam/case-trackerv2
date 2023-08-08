@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'dal.autocomplete',
     'dal_select2',
     'kurumlar',
-    'yerler'
+    'yerler',
+    'django_select2',
 ]
 
 MIDDLEWARE = [
