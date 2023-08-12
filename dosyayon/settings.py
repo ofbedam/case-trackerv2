@@ -44,13 +44,18 @@ INSTALLED_APPS = [
     'kisiler',
     'cocukkisileri',
     'yasaltemsilciler',
+    'kurumlar',
+    'yerler',
     'dal',
     'dal.autocomplete',
     'dal_select2',
-    'kurumlar',
-    'yerler',
     'django_select2',
+    'smart_selects',
 ]
+
+# settings.py
+SMART_SELECTS_USE_DJANGO_JQUERY = True
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -97,7 +102,7 @@ WSGI_APPLICATION = 'dosyayon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'casetracker2',
+        'NAME': 'new_schema60',
         'USER': 'user1',
         'PASSWORD': '123456',
         'HOST': 'localhost',

@@ -18,6 +18,8 @@ urlpatterns = [
     path('kisiler-autocomplete/', KisilerAutocomplete.as_view(), name='kisiler-autocomplete'),
     path('kurumlar/', include('kurumlar.urls')),
     path('select2/', include('django_select2.urls')),
+    path('chaining/', include('smart_selects.urls')),
+
 
 
 ]

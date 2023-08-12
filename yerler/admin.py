@@ -9,7 +9,7 @@ from .models import Country,  State, City
 class CityAdmin(admin.ModelAdmin):
     search_fields = ['name', 'state', 'country']
     # list_display = ('__str__',)  # This displays the custom representation from the __str__ method.
-    list_display = ['id','name', 'state', 'country']
+    list_display = ['id','name', 'state','country']
 
 
 class StateAdmin(admin.ModelAdmin):

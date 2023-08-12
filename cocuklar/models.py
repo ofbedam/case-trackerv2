@@ -21,7 +21,7 @@ class Cocuklar(models.Model):
 
     IletisimBilgileri = models.TextField(blank=True, null=True)
     Notlar = models.TextField(blank=True, null=True)
-    UlkesiID = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Ülke Adı', db_column='UlkesiID', related_name='cocuklar')
+    Ulkesi = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Ülke Adı', db_column='country_id', related_name='cocuklar')
     # Add ManyToManyField for Dosyalar
     #dosyalar = models.ManyToManyField('Dosyalar', verbose_name='Çocuğa İlişkin Dosyalar', related_name='cocuklar')
 

@@ -19,10 +19,10 @@ class Dosyalar(models.Model):
     DosyaAcilisTarihi = models.DateField()
     DosyaKapatmaTarihi = models.DateField(null=True, blank=True)
     DosyaDurumu = models.CharField(max_length=10, choices=[('Açık', 'Açık'), ('Kapalı', 'Kapalı'), ('Arşiv', 'Arşiv')])
-    GonderenUlkeID = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',
-                                       db_column='GonderenUlkeID', related_name='gonderen_dosyalar')
-    YerineGetirenUlkeID = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
-                                            db_column='YerineGetirenUlkeID', related_name='yerine_getiren_dosyalar')
+    GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',
+                                       db_column='gonderen_country_id', related_name='gonderen_dosyalar')
+    YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
+                                            db_column='yerinegetiren_country_id', related_name='yerine_getiren_dosyalar')
     TalepEdenKurumTarih = models.DateField(null=True, blank=True)
     TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
     basvurucu = models.ForeignKey(Kisiler, related_name='dosyalar_basvurucu', on_delete=models.CASCADE,

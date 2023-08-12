@@ -44,6 +44,6 @@ class CocuklarAdmin(admin.ModelAdmin):
 
 
     list_display = ['CocukID', 'Adi', 'Soyadi', 'DogumTarihi', 'calculate_age', 'calculate_age1', 'age2', 'Yas16_Tarih',
-                    'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'UlkesiID','dosyalar_list']  # Add 'age' or 'calculate_age' to display the age
+                    'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'Ulkesi','dosyalar_list']  # Add 'age' or 'calculate_age' to display the age
 
 admin.site.register(Cocuklar, CocuklarAdmin)

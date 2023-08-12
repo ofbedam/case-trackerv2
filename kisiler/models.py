@@ -18,7 +18,7 @@ class Kisiler(models.Model):
     Eposta = models.EmailField(max_length=100, blank=True, null=True)
     YasalTemsilciID = models.ForeignKey(YasalTemsilciler, on_delete=models.CASCADE, verbose_name='Yasal Temsilci', db_column='YasalTemsilciID', related_name='kisiler', blank=True, null=True)
     Notlar = models.TextField(blank=True, null=True)
-    UlkesiID = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Ülke Adı', db_column='UlkesiID')
+    UlkesiID = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Ülke Adı', db_column='country_id')
 
     def __str__(self):
         return self.Adi + ' ' + self.Soyadi
