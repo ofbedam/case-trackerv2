@@ -6,7 +6,7 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from dosyalar.models import Dosyalar
+from dosyalar.models import Dosyalar, CocugaBakimTurleri, CocuklaYakinlikTurleri, MahkemeRedNedenleri, NihaiSonucTurleri, Talep1980CK
 from kisiler.models import Kisiler
 
 # Register your models here.
@@ -109,3 +109,8 @@ class DosyalarAdmin(admin.ModelAdmin):
   # Add custom actions to the DosyalarAdmin
     actions = [print_dosyalar, save_as_pdf_action]
 admin.site.register(Dosyalar, DosyalarAdmin)
+admin.site.register(CocugaBakimTurleri)
+admin.site.register(CocuklaYakinlikTurleri)
+admin.site.register(MahkemeRedNedenleri)
+admin.site.register(NihaiSonucTurleri)
+admin.site.register(Talep1980CK)

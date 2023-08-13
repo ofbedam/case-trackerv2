@@ -53,7 +53,7 @@ INSTALLED_APPS = [
     'smart_selects',
     'todo',
      'todo_app',
-    'django.contrib.sites',
+    # 'django.contrib.sites',
 ]
 
 SMART_SELECTS_USE_DJANGO_JQUERY = True

@@ -4,6 +4,7 @@ from django.db.models.signals import post_migrate
 from django.dispatch import receiver
 from ulkeler.models import Ulkeler
 from kurumlar.models import KurumTurleri
+from dosyalar.models import CocuklaYakinlikTurleri, CocugaBakimTurleri, NihaiSonucTurleri, MahkemeRedNedenleri
 
 @receiver(post_migrate, sender=apps.get_app_config('ulkeler'))
 def create_initial_data(sender, **kwargs):
@@ -319,3 +320,138 @@ def create_initial_data(sender, **kwargs):
                 retry_count += 1
                 if retry_count >= max_retry:
                     raise  # Raise the exception if the maximum retry count is reached
+
+
+
+@receiver(post_migrate, sender=apps.get_app_config('dosyalar'))
+def create_initial_data(sender, **kwargs):
+    # Check if the 'CocuklaYakinlikTurleri' table is empty
+    if CocuklaYakinlikTurleri.objects.count() == 0:
+        # List of turleri
+        yakinlik_turu_list = [
+            'Anne',
+            'Baba',
+            'Büyük anne / baba',
+            'Diğer akraba',
+            'Kurum',
+            'Diğer',
+        ]
+
+        max_retry = 10  # Set the maximum number of retries
+        retry_count = 0
+
+        while retry_count < max_retry:
+            try:
+                for adi in yakinlik_turu_list:
+                    CocuklaYakinlikTurleri.objects.create(adi=adi)
+                break  # Exit the loop if data creation is successful
+
+            except Exception as e:
+                retry_count += 1
+                if retry_count >= max_retry:
+                    raise  # Raise the exception if the maximum retry count is reached
+
+
+@receiver(post_migrate, sender=apps.get_app_config('dosyalar'))
+def create_initial_data(sender, **kwargs):
+                    # Check if the 'CocugaBakimTurleri' table is empty
+                    if CocugaBakimTurleri.objects.count() == 0:
+                        # List of kurumturleri
+                        bakim_turu_list = [
+                            'Tek Başına Ana Bakıcı /Sole Primary Carer',
+                            'Ortak Bakım /Joint Primary Carer',
+                            'Ana Bakıcı Değil /Non - Primary Carer',
+                        ]
+
+                        max_retry = 10  # Set the maximum number of retries
+                        retry_count = 0
+
+                        while retry_count < max_retry:
+                            try:
+                                for adi in bakim_turu_list:
+                                    CocugaBakimTurleri.objects.create(adi=adi)
+                                break  # Exit the loop if data creation is successful
+
+                            except Exception as e:
+                                retry_count += 1
+                                if retry_count >= max_retry:
+                                    raise  # Raise the exception if the maximum retry count is reached
+
+
+
+
+
+
+@receiver(post_migrate, sender=apps.get_app_config('dosyalar'))
+def create_initial_data(sender, **kwargs):
+                    # Check if the 'NihaiSonucTurleri' table is empty
+                    if NihaiSonucTurleri.objects.count() == 0:
+                        # List of nihai sonuç
+                        nihai_sonuc_turu_list = [
+                            ('Merkezi Makam tarafından reddedilen dava'),
+                            ('Çocuk izlenmiyor, Sözleşme dışı bir ülkeye veya başka bir Sözleşme ülkesine kadar izleniyor'),
+                            ('Geri dönüş için gönüllü anlaşma'),
+                            ('İadesizlik için gönüllü anlaşma'),
+                            ('Yargı kararı – İade emri verildi'),
+                            ('Yargı kararı – İade reddedildi'),
+                            ('Askıda olması'),
+                            ('Geri çekildi'),
+                            ('Farklı çocuklar için çoklu sonuçlar veya farklı sonuçlar'),
+                            ('Başvuranın herhangi bir işlem yapmaması nedeniyle dava kapatılmıştır'),
+                            ('Diğer'),
+                            ('Erişim/iletişim için gönüllü anlaşma'),
+                            ('Yargı kararı – erişim/iletişim emri verildi'),
+                            ('Yargı kararı – erişim/iletişim reddedildi'),
+                        ]
+
+                        max_retry = 10  # Set the maximum number of retries
+                        retry_count = 0
+
+                        while retry_count < max_retry:
+                            try:
+                                for adi in nihai_sonuc_turu_list:
+                                    NihaiSonucTurleri.objects.create(adi=adi)
+                                break  # Exit the loop if data creation is successful
+
+                            except Exception as e:
+                                retry_count += 1
+                                if retry_count >= max_retry:
+                                    raise  # Raise the exception if the maximum retry count is reached
+
+
+
+
+@receiver(post_migrate, sender=apps.get_app_config('dosyalar'))
+def create_initial_data(sender, **kwargs):
+                    # Check if the 'MahkemeRedNedenleri' table is empty
+                    if MahkemeRedNedenleri.objects.count() == 0:
+                        # List of nihai sonuç
+                        mahkeme_red_nedenleri_list = [
+                            ('a. Çocuk mutad olarak Talep Eden Ülkede ikamet etmiyor'),
+                            ('b. Başvuranın velayet hakkı yoktu'),
+                            ('c. Madde 12 (çocuğun yerleşimi)'),
+                            ('d. Madde 13(1)(a) başvuranın velayet haklarını kullanmaması'),
+                            ('e. Madde 13(1)(a) muvafakat'),
+                            ('f. Madde 13(1)(a) rıza'),
+                            ('g. Madde 13(1)(b) (ağır risk)'),
+                            ('h. Madde 13(2) Çocuğun itirazları'),
+                            ('i. Madde 20 (İnsan Hakları)'),
+                            ('j. Yorumlar')
+                        ]
+
+                        max_retry = 10  # Set the maximum number of retries
+                        retry_count = 0
+
+                        while retry_count < max_retry:
+                            try:
+                                for adi in mahkeme_red_nedenleri_list:
+                                    MahkemeRedNedenleri.objects.create(adi=adi)
+                                break  # Exit the loop if data creation is successful
+
+                            except Exception as e:
+                                retry_count += 1
+                                if retry_count >= max_retry:
+                                    raise  # Raise the exception if the maximum retry count is reached
+
+
+

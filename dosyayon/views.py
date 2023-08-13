@@ -52,3 +52,8 @@ def generate_pdf(request):
 
 # dosyayon/views.py
 
+from django.shortcuts import render
+
+def index(request):
+    # Burada isteğe bağlı olarak ana sayfa için verileri hazırlayabilirsiniz
+    return render(request, 'todo/base.html')

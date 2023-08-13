@@ -8,6 +8,7 @@ from .views import CocuklarAutocomplete, KisilerAutocomplete, generate_pdf
 from django.views.generic import TemplateView
 
 
+from dosyayon import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -21,7 +22,7 @@ urlpatterns = [
 
     path("todo-app/", include("todo_app.urls")),
     path("todo/", include("todo.urls")),
-
+path('', views.index, name='index'),
 
 
 

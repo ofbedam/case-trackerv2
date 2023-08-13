@@ -93,3 +93,129 @@ class Dosyalar(models.Model):
 #            managed = False
 #         db_table = 'Dosyalar'
 #
+
+
+class NihaiSonucTurleri(models.Model):
+    id = models.AutoField(primary_key=True)
+    adi = models.TextField()
+
+    def __str__(self):
+        return self.adi
+
+    class Meta:
+       # managed = False
+        db_table = 'NihaiSonucTurleri'
+
+
+class MahkemeRedNedenleri(models.Model):
+    id = models.AutoField(primary_key=True)
+    adi = models.TextField()
+
+    def __str__(self):
+        return self.adi
+
+    class Meta:
+        # managed = False
+        db_table = 'MahkemeRedNedenleri'
+
+
+
+class CocuklaYakinlikTurleri(models.Model):
+    id = models.AutoField(primary_key=True)
+    adi = models.TextField()
+
+    def __str__(self):
+        return self.adi
+
+    class Meta:
+        # managed = False
+        db_table = 'CocuklaYakinlikTurleri'
+
+class CocugaBakimTurleri(models.Model):
+    id = models.AutoField(primary_key=True)
+    adi = models.TextField()
+
+    def __str__(self):
+        return self.adi
+
+    class Meta:
+        # managed = False
+        db_table = 'CocugaBakimTurleri'
+
+
+class Talep1980CK(models.Model):
+    nihai_sonuc_4a = models.ForeignKey(NihaiSonucTurleri, related_name='nihaisonuc', on_delete=models.CASCADE,
+                                       verbose_name='4-a Nihai Sonuç', null=True, blank=True)
+
+    arabuluculuk_basvuru_4b = models.CharField(verbose_name='4-b-Taraflar arabuluculuk başvurdu mu', max_length=20,
+                                               null=True,
+                                               blank=True,
+                                               choices=[('Evet', 'Evet'), ('Hayır', 'Hayır'),
+                                                        ('Bilinmiyor', 'Bilinmiyor')])
+
+    gecici_kisisel_iliski_4c = models.CharField(
+        verbose_name='4-c- Geçici kişiel ilişki emredildi mi veya kararlaştırıldı mı?', max_length=20,
+        null=True, blank=True,
+        choices=[('Evet', 'Evet'), ('Hayır', 'Hayır'), ('Bilinmiyor', 'Bilinmiyor')])
+
+    mahkeme_red_neden_5 = models.ForeignKey(MahkemeRedNedenleri, related_name='nihaisonuc', on_delete=models.CASCADE,
+                                            verbose_name='5-Mahkeme Red Nedeni', null=True, blank=True)
+
+    basvurunun_alindigi_tarih_6a = models.DateField(verbose_name='6-a-Başvurunun Alındığı Tarih', null=True, blank=True)
+    nihai_sonuc_tarihi_6c = models.DateField(verbose_name='6-c-Nihai Sonuç Tarihi', null=True, blank=True)
+
+    karar_anlasma_yerine_6d = models.CharField(verbose_name='6-d-Karar yada anlaşma yerine getirildi mi??',
+                                               max_length=20, choices=[('Evet', 'Evet'), ('Hayır', 'Hayır'),
+                                                                       ('Bilinmiyor', 'Bilinmiyor')])
+
+    karar_anlasma_yerine_6e = models.DateField(verbose_name='6-e-Karar yada anlaşma yerine getirildiği tarih',
+                                               null=True, blank=True)
+
+    mahkeme_karari_temyiz_edildi_mi = models.CharField(verbose_name='7-a-Mahkeme kararı temyiz edildi mi',
+                                                       max_length=20, choices=[('Evet', 'Evet'), ('Hayır', 'Hayır'),
+                                                                               ('Evet - 1 Seviye', 'Evet - 1 Seviye'),
+                                                                               ('Evet -2 Seviye', 'Evet -2 Seviye'),
+                                                                               ('Evet -3 Seviye', 'Evet -3 Seviye'),
+                                                                               ('Bilinmiyor', 'Bilinmiyor')])
+
+
+
+    evet_ise_ilk_derece_mahkemesinde_davanin_sonucu_7b = models.CharField(
+        verbose_name='7-b- Evet ise, ilk derece mahkemesinde davanın sonucu ne oldu?', max_length=40, null=True,
+        blank=True,
+        choices=[('Nihai temyizdeki sonuçla aynı', 'Nihai temyizdeki sonuçla aynı'),
+                 ('Nihai temyizdeki sonuçtan farklı', 'Nihai temyizdeki sonuçtan farklı'),
+                 ('Bilinmiyor', 'Bilinmiyor')])
+
+    ikinci_derece_mahkemenin_karar_tarihi_7d = models.DateField(
+        verbose_name='7-d-İkinci derece mahkemenin karar tarihi', null=True, blank=True)
+
+    ucuncu_derece_mahkemenin_karar_tarihi_7e = models.DateField(
+        verbose_name='7-e-Üçüncü derece mahkemenin karar tarihi', null=True, blank=True)
+
+    basvurucunun_cocukla_yakinligi_8a = models.ForeignKey(CocuklaYakinlikTurleri,
+                                                          related_name='Başvurucunun_çocukla_yakınlığı',
+                                                          on_delete=models.CASCADE,
+                                                          verbose_name='8-a-Başvurucunun çocukla yakınlığı', null=True,
+                                                          blank=True)
+
+    basvurucunun_bakim_durumu_8b = models.ForeignKey(CocugaBakimTurleri,
+                                                     related_name='basvurucunun_cocuga_bakimi',
+                                                     on_delete=models.CASCADE,
+                                                     verbose_name=' 8-b-Başvurucunun çocuğa bakım durumu', null=True,
+                                                     blank=True)
+
+    kaciranin_cocukla_yakinligi_9a = models.ForeignKey(CocuklaYakinlikTurleri,
+                                                       related_name='kaciranin_cocukla_yakinligi',
+                                                       on_delete=models.CASCADE,
+                                                       verbose_name='9-a-Kaçıranın çocukla yakınlığı', null=True,
+                                                       blank=True)
+
+    kaciranin_bakim_durumu_9b = models.ForeignKey(CocugaBakimTurleri,
+                                                  related_name='kaciranin_cocuga_bakimi',
+                                                  on_delete=models.CASCADE,
+                                                  verbose_name=' 9-b-Kaçıranın çocuğa bakım durumu', null=True,
+                                                  blank=True)
+
+    diger_aciklamalar_11 = models.CharField(verbose_name='11-Diğer Açıklamalar?', max_length=200, null=True,
+                                            blank=True)
