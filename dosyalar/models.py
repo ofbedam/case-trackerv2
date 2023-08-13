@@ -4,6 +4,7 @@ from ulkeler.models import Ulkeler
 from kisiler.models import Kisiler
 from cocuklar.models import Cocuklar
 from yerler.models import Country
+from kurumlar.models import Kurumlar
 
 # Create your models here.
 
@@ -23,6 +24,8 @@ class Dosyalar(models.Model):
                                        db_column='gonderen_country_id', related_name='gonderen_dosyalar')
     YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
                                             db_column='yerinegetiren_country_id', related_name='yerine_getiren_dosyalar')
+    TalepEdenKurum = models.ForeignKey(Kurumlar, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
+                                            db_column='talepeden_kurumid', related_name='talep_eden_kurum_dosyalar', null=True, blank=True)
     TalepEdenKurumTarih = models.DateField(null=True, blank=True)
     TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
     basvurucu = models.ForeignKey(Kisiler, related_name='dosyalar_basvurucu', on_delete=models.CASCADE,
