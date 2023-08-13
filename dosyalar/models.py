@@ -13,9 +13,9 @@ class Dosyalar(models.Model):
     DosyaID = models.AutoField(primary_key=True)
     DosyaYil = models.IntegerField()
     DosyaNo = models.IntegerField()
-    Aciklama = models.TextField()
+    Aciklama = models.TextField(null=True, blank=True)
     DosyaTuru = models.CharField(verbose_name='Tür', max_length=20,
-                                 choices=[('1980 ÇK', '1980 ÇK'), ('1996', '1996'), ('1980 Velayet', '1980 Velayet'),
+                                 choices=[('1980CK_iade', '1980 ÇK İade'), ('1980CK_Sahsi_iliski', '1980 ÇK Şahsi İlişki'),('1996', '1996'), ('1980Velayet', '1980 Velayet'),
                                           ('Bilgi', 'Bilgi')])
     DosyaAcilisTarihi = models.DateField()
     DosyaKapatmaTarihi = models.DateField(null=True, blank=True)
@@ -94,7 +94,7 @@ class Dosyalar(models.Model):
 #         db_table = 'Dosyalar'
 #
 
-
+######### Talep1980CK DOSYA TÜRÜNE ÖZGÜ ALANLAR  ############
 class NihaiSonucTurleri(models.Model):
     id = models.AutoField(primary_key=True)
     adi = models.TextField()
@@ -219,3 +219,6 @@ class Talep1980CK(models.Model):
 
     diger_aciklamalar_11 = models.CharField(verbose_name='11-Diğer Açıklamalar?', max_length=200, null=True,
                                             blank=True)
+
+
+######### Talep1980CK DOSYA TÜRÜNE ÖZGÜ ALANLAR SONU  ############

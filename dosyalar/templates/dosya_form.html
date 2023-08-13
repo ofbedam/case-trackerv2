@@ -1,0 +1,8 @@
+<!-- dosya_form.html -->
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.dosya_form.as_p }}
+    {{ form.talep1980ck_form.as_p }}
+    <button type="submit">Gönder</button>
+</form>

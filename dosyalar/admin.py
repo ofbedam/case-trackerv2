@@ -9,6 +9,9 @@ from reportlab.pdfgen import canvas
 from dosyalar.models import Dosyalar, CocugaBakimTurleri, CocuklaYakinlikTurleri, MahkemeRedNedenleri, NihaiSonucTurleri, Talep1980CK
 from kisiler.models import Kisiler
 
+
+
+
 # Register your models here.
 # Define the customized form for Dosyalar
 class DosyalarAdminForm(forms.ModelForm):
