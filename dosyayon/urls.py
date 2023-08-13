@@ -5,7 +5,6 @@ from django.urls import path, include
 from django.contrib import admin
 
 from .views import CocuklarAutocomplete, KisilerAutocomplete, generate_pdf
-from django.urls import path
 from django.views.generic import TemplateView
 
 
@@ -19,6 +18,12 @@ urlpatterns = [
     path('kurumlar/', include('kurumlar.urls')),
     path('select2/', include('django_select2.urls')),
     path('chaining/', include('smart_selects.urls')),
+
+    path("todo-app/", include("todo_app.urls")),
+    path("todo/", include("todo.urls")),
+
+
+
 
 
 

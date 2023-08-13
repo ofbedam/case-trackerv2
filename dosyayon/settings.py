@@ -51,9 +51,11 @@ INSTALLED_APPS = [
     'dal_select2',
     'django_select2',
     'smart_selects',
+    'todo',
+     'todo_app',
+    'django.contrib.sites',
 ]
 
-# settings.py
 SMART_SELECTS_USE_DJANGO_JQUERY = True
 
 
@@ -102,7 +104,7 @@ WSGI_APPLICATION = 'dosyayon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'new_schema60',
+        'NAME': 'new_schema77',
         'USER': 'user1',
         'PASSWORD': '123456',
         'HOST': 'localhost',
@@ -139,7 +141,7 @@ TIME_ZONE = 'Europe/Istanbul'
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
