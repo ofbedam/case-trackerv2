@@ -1,3 +1,5 @@
+#dosyalar/admin.py
+
 from django.contrib import admin
 from django import forms
 
@@ -44,6 +46,19 @@ class DosyalarAdmin(admin.ModelAdmin):
 
     # Define the list filter options for specific fields
     list_filter = ['DosyaYil', 'DosyaTuru', 'DosyaDurumu']
+
+    # def save(self, *args, **kwargs):
+    #     if not self.pk:  # Yeni kayıt eklenirken
+    #         # En son kaydın sayısı alınıyor
+    #         en_son_kayit = Dosya.objects.filter(dosya_kodu=self.dosya_kodu, DosyaYil=self.DosyaYil).order_by(
+    #             '-sayi').first()
+    #         if en_son_kayit:
+    #             # En son kaydın sayısı alınıp 1 ekleniyor
+    #             self.sayi = en_son_kayit.sayi + 1
+    #         else:
+    #             # İlk kayıt için sayı 1 olarak atanıyor
+    #             self.DosyaNo = 1
+    #     super().save(*args, **kwargs)
 
 
     def get_changeform_initial_data(self, request):

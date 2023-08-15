@@ -1,3 +1,6 @@
+#dosyalar/models.py
+
+
 from django.db import models
 
 from ulkeler.models import Ulkeler
@@ -8,26 +11,41 @@ from kurumlar.models import Kurumlar
 
 # Create your models here.
 
-
+#### DOSYA ZORUNLU ORTAK ALANLAR BAŞLANGICI
 class Dosyalar(models.Model):
     DosyaID = models.AutoField(primary_key=True)
-    DosyaYil = models.IntegerField()
-    DosyaNo = models.IntegerField()
+    DosyaKodu = models.CharField(verbose_name='Dosya Kodu', max_length=20,
+                                 choices=[('3-12', '3-12 (1980CK&1996Sözleşme)'), ('3-13', '3-13 (1980Velayet)'),('3-12-Bilgi', '3-12-Bilgi')])
+    DosyaYil = models.PositiveIntegerField()
+    DosyaNo = models.PositiveIntegerField()
+
+
     Aciklama = models.TextField(null=True, blank=True)
-    DosyaTuru = models.CharField(verbose_name='Tür', max_length=20,
-                                 choices=[('1980CK_iade', '1980 ÇK İade'), ('1980CK_Sahsi_iliski', '1980 ÇK Şahsi İlişki'),('1996', '1996'), ('1980Velayet', '1980 Velayet'),
-                                          ('Bilgi', 'Bilgi')])
     DosyaAcilisTarihi = models.DateField()
+    TalepEdenKurum = models.ForeignKey(Kurumlar, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
+                                       db_column='talepeden_kurumid', related_name='talep_eden_kurum_dosyalar',
+                                       null=True, blank=True)
+    TalepEdenKurumTarih = models.DateField(null=True, blank=True)
+    TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
+
     DosyaKapatmaTarihi = models.DateField(null=True, blank=True)
     DosyaDurumu = models.CharField(max_length=10, choices=[('Açık', 'Açık'), ('Kapalı', 'Kapalı'), ('Arşiv', 'Arşiv')])
+
+
+#### DOSYA ORTAK ALANLAR SONU
+
+
+
+
+    DosyaTuru = models.CharField(verbose_name='Tür', max_length=20,
+                                 choices=[('1980CK_iade', '1980 ÇK İade'),
+                                          ('1980CK_sahsi_iliski', '1980 ÇK Şahsi İlişki'), ('1996', '1996')])
+
     GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',
                                        db_column='gonderen_country_id', related_name='gonderen_dosyalar')
     YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
                                             db_column='yerinegetiren_country_id', related_name='yerine_getiren_dosyalar')
-    TalepEdenKurum = models.ForeignKey(Kurumlar, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
-                                            db_column='talepeden_kurumid', related_name='talep_eden_kurum_dosyalar', null=True, blank=True)
-    TalepEdenKurumTarih = models.DateField(null=True, blank=True)
-    TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
+
     basvurucu = models.ForeignKey(Kisiler, related_name='dosyalar_basvurucu', on_delete=models.CASCADE,
                                   verbose_name='Başvurucu', db_column='basvurucu_id', null=True, blank=True)
 
