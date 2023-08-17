@@ -1,8 +1,11 @@
+ # cocuklar/admin.py
+
 from dal import autocomplete
 from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
 from cocuklar.models import Cocuklar
+from Dosya.models import Dosya
 # Register your models here.
 
 
@@ -39,11 +42,37 @@ class CocuklarAdmin(admin.ModelAdmin):
     # dosyalar_list.short_description = 'Dosyalar'
 
 
-    def dosyalar_list(self, obj):
-        return ", ".join([str(dosya) for dosya in obj.dosyalar.all()])
+    # def dosyalar_list(self, obj):
+    #     return ", ".join([str(dosya) for dosya in obj.dosyalar.all()])
 
+    def dosya_list(self, obj):
+        dosya_infos = []
+
+        for dosya in obj.dosya.all():
+            dosya_kodu = dosya.dosya_kodu if dosya.dosya_kodu else "Bilinmiyor"
+            dosya_kodu_adi = dict(Dosya.DOSYA_KODLARI).get(dosya_kodu, "Bilinmiyor")
+            yil = dosya.yil if dosya.yil else "Bilinmiyor"
+            sayi = dosya.sayi if dosya.sayi else "Bilinmiyor"
+
+            dosya_info = [
+                f"{dosya_kodu}",
+                f"{dosya_kodu_adi}",
+                f"{yil}",
+                f"/{sayi}",
+            ]
+            dosya_infos.append(dosya_info)
+
+        if not dosya_infos:
+            return "Dosya bilgisi bulunmuyor"
+
+        formatted_dosya_infos = "\n\n&\n".join(["\n".join(info) for info in dosya_infos])
+        return formatted_dosya_infos
 
     list_display = ['CocukID', 'Adi', 'Soyadi', 'DogumTarihi', 'calculate_age', 'calculate_age1', 'age2', 'Yas16_Tarih',
-                    'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'Ulkesi','dosyalar_list']  # Add 'age' or 'calculate_age' to display the age
+                    'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'Ulkesi', 'dosya_list']  # Add 'age' or 'calculate_age' to display the age
 
 admin.site.register(Cocuklar, CocuklarAdmin)
+
+# list_display = ['CocukID', 'Adi', 'Soyadi', 'DogumTarihi', 'calculate_age', 'calculate_age1', 'age2', 'Yas16_Tarih',
+#                 'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'Ulkesi',
+#                 'dosyalar_list']  # Add 'age' or 'calculate_age' to display the age

@@ -1,0 +1,14 @@
+{% extends 'admin/change_form.html' %}
+{% load static %}
+
+{% block content %}
+    {{ block.super }}
+    <div>
+        <h2>Create File zzzzz</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ adminform.form.as_p }}
+            <button type="submit">Create</button>
+        </form>
+    </div>
+{% endblock %}

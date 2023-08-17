@@ -1,4 +1,4 @@
-#kurumlar/urls.py
+# kurumlar/urls.py
 
 
 from . import views

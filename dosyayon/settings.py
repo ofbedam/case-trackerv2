@@ -15,7 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
@@ -26,7 +25,6 @@ SECRET_KEY = 'django-insecure-dvi^^@zg30@t*o%xf#8(jr#@y*430il+zzj9@90@$&)lj77(uu
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -51,13 +49,13 @@ INSTALLED_APPS = [
     'dal_select2',
     'django_select2',
     'smart_selects',
-    'todo',
+     'todo',
      'todo_app',
+    'Dosya'
     # 'django.contrib.sites',
 ]
 
 SMART_SELECTS_USE_DJANGO_JQUERY = True
-
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -89,29 +87,27 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'dosyayon.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-#DATABASES = {
+# DATABASES = {
 #   'default': {
 #       'ENGINE': 'django.db.backends.sqlite3',
 #       'NAME': BASE_DIR / 'db.sqlite3',
 #   }
-#}
+# }
 
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'new_schema77',
+        'NAME': 'dosyayon11',
         'USER': 'user1',
         'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '3333',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -131,7 +127,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
@@ -142,7 +137,6 @@ TIME_ZONE = 'Europe/Istanbul'
 USE_I18N = True
 
 USE_TZ = False
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
