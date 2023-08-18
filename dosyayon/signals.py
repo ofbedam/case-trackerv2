@@ -16,7 +16,7 @@ def import_data(sender, **kwargs):
     """
     Import initial data from a MySQL dump file.
     """
-    dump_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'initial_data\countries-states-cities-Turkish-2023-8-12 (1).sql')
+    dump_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'initial_data\countries-states-cities-Turkish-2023-8-12_1.sql')
     with open(dump_file_path, 'r', encoding='utf-8') as f:
         dump_data = f.read()
 

@@ -3,13 +3,14 @@ from django.template.loader import render_to_string
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from .models import Dosya, CocugaBakimTurleri, CocuklaYakinlikTurleri, MahkemeRedNedenleri, NihaiSonucTurleri, Dosya1980CK
 
+from django.urls import reverse
+from django.utils.html import format_html
 
 from django.contrib import admin
 from django import forms
 
-from .models import Dosya, DosyaIliski, DosyaIade, DosyaBilgi, Dosya1996, Dosya1980Velayet
+from .models import Dosya, DosyaIliski, DosyaIade, DosyaBilgi, Dosya1996, Dosya1980Velayet, CocugaBakimTurleri, CocuklaYakinlikTurleri, MahkemeRedNedenleri, NihaiSonucTurleri, Dosya1980CK
 
 class DosyaIliskiInline(admin.StackedInline):  # veya admin.TabularInline
     model = DosyaIliski  # İlgili inline model
@@ -136,10 +137,15 @@ class DosyaAdminForm(forms.ModelForm):
 class DosyaAdmin(admin.ModelAdmin):
     form = DosyaAdminForm
     search_fields = ['yil', 'sayi', 'Cocuklar__Adi', 'Cocuklar__Soyadi']
+
+    def analyze_data_link(self, obj):
+        url = reverse('admin:analyze_data')  # Use the admin namespace for the URL
+        return format_html('<a href="{}?dosya_id={}">Analyze Data</a>', url, obj.id)
+
+    analyze_data_link.short_description = 'Analyze Data'
     # Define the list display columns
     list_display = ['id', 'dosya_kodu', 'yil', 'sayi', 'aciklama',  'DosyaAcilisTarihi',
                     'DosyaKapatmaTarihi', 'DosyaDurumu', 'get_cocuklar']
-
     def get_cocuklar(self, obj):
         return ", ".join([cocuk.__str__() for cocuk in obj.Cocuklar.all()])
 
