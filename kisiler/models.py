@@ -26,3 +26,5 @@ class Kisiler(models.Model):
     class Meta:
       #  managed = False
         db_table = 'Kisiler'
+
+        verbose_name_plural = "Kişiler"

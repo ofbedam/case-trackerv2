@@ -12,3 +12,5 @@ class Ulkeler(models.Model):
        # managed = False
         db_table = 'Ulkeler'
 
+        verbose_name_plural = "Ülkeler"
+

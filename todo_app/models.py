@@ -20,12 +20,12 @@ class ToDoList(models.Model):
 
 
 class ToDoItem(models.Model):
-    title = models.CharField(max_length=100)
-    description = models.TextField(null=True, blank=True)
-    created_date = models.DateTimeField(auto_now_add=True)
-    due_date = models.DateTimeField(default=one_week_hence)
+    title = models.CharField(max_length=100, verbose_name='Adı')
+    description = models.TextField(null=True, blank=True, verbose_name='Açıklama')
+    created_date = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturma Tarihi')
+    due_date = models.DateTimeField(default=one_week_hence, verbose_name='Son Tarihi')
     dosya = models.ForeignKey(Dosyalar, on_delete=models.CASCADE)
-    todo_list = models.ForeignKey(ToDoList, on_delete=models.CASCADE)
+    todo_list = models.ForeignKey(ToDoList, on_delete=models.CASCADE, verbose_name='Yapılacaklar Listesi')
 
     def get_absolute_url(self):
         return reverse(
@@ -37,3 +37,4 @@ class ToDoItem(models.Model):
 
     class Meta:
         ordering = ["due_date"]
+        verbose_name_plural = "Yapılacaklar"

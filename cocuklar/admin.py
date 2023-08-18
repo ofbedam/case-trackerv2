@@ -9,6 +9,7 @@ from Dosya.models import Dosya
 # Register your models here.
 
 
+from django.urls import reverse
 # Define the customized form for Cocuklar
 class CocuklarAdminForm(forms.ModelForm):
     class Meta:
@@ -45,6 +46,29 @@ class CocuklarAdmin(admin.ModelAdmin):
     # def dosyalar_list(self, obj):
     #     return ", ".join([str(dosya) for dosya in obj.dosyalar.all()])
 
+    # def dosya_list(self, obj):
+    #     dosya_infos = []
+    #
+    #     for dosya in obj.dosya.all():
+    #         dosya_kodu = dosya.dosya_kodu if dosya.dosya_kodu else "Bilinmiyor"
+    #         dosya_kodu_adi = dict(Dosya.DOSYA_KODLARI).get(dosya_kodu, "Bilinmiyor")
+    #         yil = dosya.yil if dosya.yil else "Bilinmiyor"
+    #         sayi = dosya.sayi if dosya.sayi else "Bilinmiyor"
+    #
+    #         dosya_info = [
+    #             f"{dosya_kodu}",
+    #             f"{dosya_kodu_adi}",
+    #             f"{yil}",
+    #             f"/{sayi}",
+    #         ]
+    #         dosya_infos.append(dosya_info)
+    #
+    #     if not dosya_infos:
+    #         return "Dosya bilgisi bulunmuyor"
+    #
+    #     formatted_dosya_infos = "\n\n&\n".join(["\n".join(info) for info in dosya_infos])
+    #     return formatted_dosya_infos
+
     def dosya_list(self, obj):
         dosya_infos = []
 
@@ -54,19 +78,28 @@ class CocuklarAdmin(admin.ModelAdmin):
             yil = dosya.yil if dosya.yil else "Bilinmiyor"
             sayi = dosya.sayi if dosya.sayi else "Bilinmiyor"
 
+            # dosya_url = reverse("admin:dosya_duzenle",
+            #                     args=[dosya.id])  # 'dosya_duzenle' burada dosya düzenleme URL adınız olsun
+            # dosya_link = f'<a href="{dosya_url}">Dosyayı Düzenle</a>'
+
             dosya_info = [
-                f"{dosya_kodu}",
-                f"{dosya_kodu_adi}",
-                f"{yil}",
-                f"/{sayi}",
+                f"Dosya Kodu: {dosya_kodu}",
+                f"Dosya Adı: {dosya_kodu_adi}",
+                f"Yıl: {yil}",
+                f"Sayı: {sayi}",
             ]
             dosya_infos.append(dosya_info)
 
         if not dosya_infos:
             return "Dosya bilgisi bulunmuyor"
 
-        formatted_dosya_infos = "\n\n&\n".join(["\n".join(info) for info in dosya_infos])
+        formatted_dosya_infos = "\n\n".join(["\n".join(info) for info in dosya_infos])
         return formatted_dosya_infos
+        if not dosya_infos:
+            return "Dosya bilgisi bulunmuyor"
+
+        formatted_dosya_infos = "<br><br>".join(["<br>".join(info) for info in dosya_infos])
+        return format_html(formatted_dosya_infos)
 
     list_display = ['CocukID', 'Adi', 'Soyadi', 'DogumTarihi', 'calculate_age', 'calculate_age1', 'age2', 'Yas16_Tarih',
                     'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'Ulkesi', 'dosya_list']  # Add 'age' or 'calculate_age' to display the age

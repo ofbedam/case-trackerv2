@@ -7,8 +7,8 @@ from django.contrib import admin
 from .views import CocuklarAutocomplete, KisilerAutocomplete, generate_pdf
 from django.views.generic import TemplateView
 
+from cocuklar.views import dosya_duzenle
 
-from . import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -22,7 +22,11 @@ urlpatterns = [
     path('dosyalar/', include('dosyalar.urls')),
     path("todo-app/", include("todo_app.urls")),
     # path("todo/", include("todo.urls")),
+    path('cocuklar/', include('cocuklar.urls')),
+
 # path('', views.index, name='index'),
+
+
 
 
 

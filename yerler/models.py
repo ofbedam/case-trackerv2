@@ -82,6 +82,7 @@ class Country(models.Model):
     class Meta:
         managed = False
         db_table = 'countries'
+        verbose_name_plural = "Ülkeler"
 
 class State(models.Model):
     id = models.AutoField(primary_key=True)
@@ -103,6 +104,8 @@ class State(models.Model):
         return self.name
 
     class Meta:
+
+        verbose_name_plural = "Şehirler/Eyaletler"
         managed = False
         db_table = 'states'
 
@@ -124,5 +127,6 @@ class City(models.Model):
         return self.name
 
     class Meta:
+        verbose_name_plural = "İlçeler"
         managed = False
         db_table = 'cities'

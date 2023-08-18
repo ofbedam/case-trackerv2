@@ -22,3 +22,4 @@ class YasalTemsilciler(models.Model):
     class Meta:
       #  managed = False
         db_table = 'YasalTemsilciler'
+        verbose_name_plural = "Yasal Temsilciler"

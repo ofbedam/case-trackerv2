@@ -1,3 +1,11 @@
+from dal import autocomplete
+from django.template.loader import render_to_string
+from django.http import HttpResponse
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from .models import Dosya, CocugaBakimTurleri, CocuklaYakinlikTurleri, MahkemeRedNedenleri, NihaiSonucTurleri, Dosya1980CK
+
+
 from django.contrib import admin
 from django import forms
 
@@ -296,3 +304,10 @@ class DosyaIadeForm(forms.ModelForm):
 # class DosyaIadeAdmin(admin.ModelAdmin):
 #     form = DosyaIadeAdminForm
 
+
+
+admin.site.register(CocugaBakimTurleri)
+admin.site.register(CocuklaYakinlikTurleri)
+admin.site.register(MahkemeRedNedenleri)
+admin.site.register(NihaiSonucTurleri)
+admin.site.register(Dosya1980CK)

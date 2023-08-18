@@ -30,8 +30,7 @@ class Cocuklar(models.Model):
 
     class Meta:
         db_table = 'Cocuklar'
-
-
+        verbose_name_plural = "Çocuklar"
  # Method to calculate age
     def calculate_age1(self):
         if self.DogumTarihi:

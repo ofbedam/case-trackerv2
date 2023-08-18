@@ -53,6 +53,8 @@ class Dosya(models.Model):
 
 
     class Meta:
+
+        verbose_name_plural = 'dosyalar'
         unique_together = ['dosya_kodu', 'yil', 'sayi']  # Kombinasyonun benzersiz olmasını sağlar
         db_table = 'dosya_listesi'
 
@@ -96,6 +98,10 @@ class DosyaIade(models.Model):
     def __str__(self):
         return f"Iade - {self.dosya}"
 
+    class Meta:
+
+        verbose_name_plural = 'Çocuk İade Dosyaları'
+
     ######### Talep1980CK DOSYA TÜRÜNE ÖZGÜ ALANLAR  ############
 
 
@@ -106,7 +112,9 @@ class NihaiSonucTurleri(models.Model):
     def __str__(self):
         return self.adi
 
+    class Meta:
 
+        verbose_name_plural = 'Nihai-Sonuç-Türleri'
 
 
 class MahkemeRedNedenleri(models.Model):
@@ -116,7 +124,9 @@ class MahkemeRedNedenleri(models.Model):
     def __str__(self):
         return self.adi
 
+    class Meta:
 
+        verbose_name_plural = 'Mahkeme Red Nedenleri'
 
 
 class CocuklaYakinlikTurleri(models.Model):
@@ -126,7 +136,9 @@ class CocuklaYakinlikTurleri(models.Model):
     def __str__(self):
         return self.adi
 
+    class Meta:
 
+        verbose_name_plural = 'Çocukla Yakınlık Türleri'
 
 class CocugaBakimTurleri(models.Model):
     id = models.AutoField(primary_key=True)
@@ -136,7 +148,9 @@ class CocugaBakimTurleri(models.Model):
         return self.adi
 
 
+    class Meta:
 
+        verbose_name_plural = 'Çocuğa Bakım Türleri'
 
 class Dosya1980CK(models.Model):
     nihai_sonuc_4a = models.ForeignKey(NihaiSonucTurleri, related_name='nihaisonuc', on_delete=models.CASCADE,
