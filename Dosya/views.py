@@ -84,62 +84,7 @@ def analyze_closing_time(request):
 
 
 
-def analyze_closing_time_by_code(request):
-    dosya_objects = Dosya.objects.filter(DosyaDurumu="Kapalı")
 
-    dosya_kodlari = list(set([dosya.dosya_kodu for dosya in dosya_objects]))
-
-    plot_data = []
-
-    for dosya_kodu in dosya_kodlari:
-        dosyalar = Dosya.objects.filter(dosya_kodu=dosya_kodu)
-        kapanma_sureleri = [
-            (dosya.DosyaKapatmaTarihi - dosya.DosyaAcilisTarihi).days
-            for dosya in dosyalar
-            if dosya.DosyaKapatmaTarihi
-        ]
-        ortalama_kapanma_suresi = np.mean(kapanma_sureleri)
-
-        plt.figure(figsize=(10, 6))
-        plt.hist(kapanma_sureleri, bins=20, color='blue', alpha=0.7)
-        plt.axvline(
-            ortalama_kapanma_suresi,
-            color='red',
-            linestyle='dashed',
-            linewidth=1.5,
-            label=f'Ortalama: {ortalama_kapanma_suresi:.2f} gün'
-        )
-        plt.title(f'Dosya Kodu: {dosya_kodu} - Ortalama Kapanma Süresi Analizi')
-        plt.xlabel('Kapanma Süresi (gün)')
-        plt.ylabel('Dosya Sayısı')
-        plt.legend()
-        plt.grid()
-
-        plot_file = os.path.join(
-            settings.MEDIA_ROOT, f"{dosya_kodu}_dosya_closing_time_analysis.png"
-        )
-        plt.savefig(plot_file)
-        plt.close()
-
-        plot_file_url = request.build_absolute_uri(
-            settings.MEDIA_URL + f"{dosya_kodu}_dosya_closing_time_analysis.png"
-        )
-
-        plot_data.append(
-            {
-                'dosya_kodu': dosya_kodu,
-                'plot_file_url': plot_file_url,
-                'ortalama_kapanma_suresi': ortalama_kapanma_suresi,
-            }
-        )
-
-    context = {
-        'plot_data': plot_data,
-    }
-
-    return render(
-        request, 'dosya_closing_time_by_code_analysis.html', context
-    )
 def analyze_closing_time_by_code(request):
     dosya_objects = Dosya.objects.filter(DosyaDurumu='Kapalı')  # Sadece Kapalı dosyaları al
 
@@ -175,11 +120,24 @@ def analyze_closing_time_by_code(request):
         # Create the absolute URL for the saved plot file
         plot_file_url = request.build_absolute_uri(settings.MEDIA_URL + f"{dosya_kodu}_dosya_closing_time_analysis.png")
 
+        dosya_listesi = []
+        for dosya, kapanma_suresi in zip(dosyalar, kapanma_sureleri):
+            dosya_data = {
+                'id': dosya.id,
+                'dosya_kodu': dosya.dosya_kodu,
+                'yil': dosya.yil,
+                'sayi': dosya.sayi,
+                'DosyaAcilisTarihi': dosya.DosyaAcilisTarihi,
+                'DosyaKapatmaTarihi': dosya.DosyaKapatmaTarihi,
+                'kapanma_suresi': kapanma_suresi,  # Doğru kapanma süresini burada kullan
+            }
+            dosya_listesi.append(dosya_data)
+
         plot_data[dosya_kodu] = {
             'ortalama_kapanma_suresi': ortalama_kapanma_suresi,
             'plot_file_url': plot_file_url,
-            'dosyalar': dosyalar,  # Dosya verilerini de sakla
-            'kapanma_sureleri': kapanma_sureleri  # Kapanma sürelerini de sakla
+            'dosyalar': dosya_listesi,  # Doğru dosya verilerini de sakla
+            'kapanma_sureleri': kapanma_sureleri  # Doğru kapanma sürelerini de sakla
         }
 
     context = {
@@ -188,5 +146,4 @@ def analyze_closing_time_by_code(request):
     }
 
     return render(request, 'dosya_closing_time_by_code_analysis.html', context)
-
 

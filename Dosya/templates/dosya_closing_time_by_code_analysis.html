@@ -30,7 +30,7 @@
       <th>Sayı</th>
       <th>Dosya Açılış Tarihi</th>
       <th>Dosya Kapanma Tarihi</th>
-      <th>Kapanma Süresi</th>
+      <th>Kapanma Süresi (gün)</th>
     </tr>
   </thead>
   <tbody>
@@ -42,35 +42,15 @@
       <td>{{ dosya.sayi }}</td>
       <td>{{ dosya.DosyaAcilisTarihi }}</td>
       <td>{{ dosya.DosyaKapatmaTarihi }}</td>
- <td>{{ kapanma_suresi }}</td>
+
+    <td>{{ dosya.kapanma_suresi }}</td>
+
 
     </tr>
     {% endfor %}
   </tbody>
 </table>
 {% endfor %}
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Dosya Kodu</th>
-            <th>Ortalama Kapanma Süresi</th>
-            <th>Kapanma Süreleri</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for dosya_kodu, data in plot_data.items %}
-            <tr>
-                <td>{{ dosya_kodu }}</td>
-                <td>{{ data.ortalama_kapanma_suresi }}</td>
-                <td>
-                    {% for sure in data.kapanma_sureleri %}
-                        {{ sure }}{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
 
 </body>
 </html>
