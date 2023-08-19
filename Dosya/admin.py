@@ -92,6 +92,10 @@ class DosyaAdminForm(forms.ModelForm):
     class Meta:
         model = Dosya
         fields = '__all__'
+        widgets = {
+            'Cocuklar': autocomplete.ModelSelect2Multiple(url='cocuklar-autocomplete'),
+        }
+
 
     def clean(self):
         cleaned_data = super().clean()
@@ -140,10 +144,25 @@ class DosyaAdminForm(forms.ModelForm):
 
         if dosya_durumu == 'Kapalı' and not kapatma_tarihi:
             raise forms.ValidationError("Dosya kapatma tarihi girilmediği halde durum 'Kapalı' olarak seçilemez.")
+
+
+
 @admin.register(Dosya)
 class DosyaAdmin(admin.ModelAdmin):
     form = DosyaAdminForm
     search_fields = ['yil', 'sayi', 'Cocuklar__Adi', 'Cocuklar__Soyadi']
+
+    # def get_readonly_fields(self, request, obj=None):
+    #     readonly_fields = list(self.readonly_fields)
+    #     if obj and obj.pk:
+    #         # If object is being edited (not during creation), add DosyaTuru to readonly_fields
+    #         readonly_fields.append('DosyaTuru')
+    #     return readonly_fields
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj: # editing an existing object
+            return self.readonly_fields + ('dosya_kodu', 'yil', 'sayi')
+        return self.readonly_fields
 
     def analyze_data_link(self, obj):
         url = reverse('admin:analyze_data')  # Use the admin namespace for the URL

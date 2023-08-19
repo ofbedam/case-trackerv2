@@ -81,6 +81,9 @@ def analyze_closing_time(request):
 
     context = {'plot_file_url': plot_file_url}
     return render(request, 'dosya_closing_time_analysis.html', context)
+
+
+
 def analyze_closing_time_by_code(request):
     dosya_objects = Dosya.objects.filter(DosyaDurumu="Kapalı")
 
@@ -137,3 +140,53 @@ def analyze_closing_time_by_code(request):
     return render(
         request, 'dosya_closing_time_by_code_analysis.html', context
     )
+def analyze_closing_time_by_code(request):
+    dosya_objects = Dosya.objects.filter(DosyaDurumu='Kapalı')  # Sadece Kapalı dosyaları al
+
+    # Dosya kodlarını çekme
+    dosya_kodlari = list(set([dosya.dosya_kodu for dosya in dosya_objects]))
+
+    plot_data = {}
+
+    # Her bir dosya kodu için ayrı analiz yapma
+    for dosya_kodu in dosya_kodlari:
+        dosyalar = dosya_objects.filter(dosya_kodu=dosya_kodu)
+        acilis_tarihleri = [dosya.DosyaAcilisTarihi for dosya in dosyalar if dosya.DosyaKapatmaTarihi]
+        kapanma_tarihleri = [dosya.DosyaKapatmaTarihi for dosya in dosyalar if dosya.DosyaKapatmaTarihi]
+
+        kapanma_sureleri = [(kapanma - acilis).days for acilis, kapanma in zip(acilis_tarihleri, kapanma_tarihleri) if kapanma]
+
+        ortalama_kapanma_suresi = np.mean(kapanma_sureleri)
+
+        plt.figure(figsize=(10, 6))
+        plt.hist(kapanma_sureleri, bins=20, color='blue', alpha=0.7)
+        plt.axvline(ortalama_kapanma_suresi, color='red', linestyle='dashed', linewidth=1.5, label=f'Ortalama: {ortalama_kapanma_suresi:.2f} gün')
+        plt.title(f'Dosya Kodu: {dosya_kodu} - Ortalama Kapanma Süresi Analizi')
+        plt.xlabel('Kapanma Süresi (gün)')
+        plt.ylabel('Dosya Sayısı')
+        plt.legend()
+        plt.grid()
+
+        # Save the plot to the media directory
+        plot_file = os.path.join(settings.MEDIA_ROOT, f"{dosya_kodu}_dosya_closing_time_analysis.png")
+        plt.savefig(plot_file)
+        plt.close()
+
+        # Create the absolute URL for the saved plot file
+        plot_file_url = request.build_absolute_uri(settings.MEDIA_URL + f"{dosya_kodu}_dosya_closing_time_analysis.png")
+
+        plot_data[dosya_kodu] = {
+            'ortalama_kapanma_suresi': ortalama_kapanma_suresi,
+            'plot_file_url': plot_file_url,
+            'dosyalar': dosyalar,  # Dosya verilerini de sakla
+            'kapanma_sureleri': kapanma_sureleri  # Kapanma sürelerini de sakla
+        }
+
+    context = {
+        'plot_data': plot_data,
+        'dosya_kodlari': dosya_kodlari,
+    }
+
+    return render(request, 'dosya_closing_time_by_code_analysis.html', context)
+
+

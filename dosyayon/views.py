@@ -6,7 +6,7 @@ from cocuklar.models import Cocuklar
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-
+from yerler.models import Country, State, City
 from kisiler.models import Kisiler
 from django.views.generic import ListView
 from Dosya.models import Dosya
@@ -19,6 +19,35 @@ class KisilerAutocomplete(autocomplete.Select2QuerySetView):
             qs = qs.filter(Adi__icontains=self.q)
 
         return qs
+
+
+class CountryAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = Country.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
+class StateAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = State.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
+class CityAutocomplete(autocomplete.Select2QuerySetView):
+    def get_queryset(self):
+        qs = City.objects.all()
+
+        if self.q:
+            qs = qs.filter(name__icontains=self.q)
+
+        return qs
+
 
 
 class CocuklarAutocomplete(autocomplete.Select2QuerySetView):

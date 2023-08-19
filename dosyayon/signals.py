@@ -2,11 +2,16 @@
 from django.apps import apps
 from django.db.models.signals import post_migrate
 from django.dispatch import receiver
-
-from kurumlar.models import KurumTurleri
+from random import randint
+from kurumlar.models import KurumTurleri, Kurumlar
 from Dosya.models import CocuklaYakinlikTurleri, CocugaBakimTurleri, NihaiSonucTurleri, MahkemeRedNedenleri
+from yerler.models import Country, State, City
+from cocuklar.models import Cocuklar
+from kisiler.models import Kisiler
 
-
+import random
+from datetime import date, timedelta
+from Dosya.models import Dosya
 # dosyayon/signals.py
 from django.db.models.signals import pre_migrate
 from django.dispatch import receiver
@@ -18,6 +23,142 @@ import os
 import os
 from django.db import connection
 from django.dispatch import receiver
+
+
+
+import random
+from datetime import date, timedelta
+from django.db.models.signals import post_migrate
+from django.dispatch import receiver
+
+
+
+NAMES_NEW = [
+    "Eleanor", "Sebastian", "Aria", "Felix", "Lila", "Victor", "Zara", "Theodore", "Amara", "Adrian",
+    "Luna", "Ezra", "Athena", "Maximus", "Evelyn", "Roman", "Elara", "August", "Cora", "Atticus",
+    "Yusuf", "Azra", "Kuzey", "Elif", "Miray", "Aras", "Defne", "Can", "Aylin", "Emir",
+    "Lucia", "Matias", "Sofía", "Leonardo", "Valentina", "Santiago", "Isabella", "Dante", "Emma", "Mariana"
+]
+
+
+
+SURNAMES_NEW = [
+    "Çalışkan", "Kara", "Yıldırım", "Aydın", "Başar", "Kaplan", "Demirci", "Altın", "Şahin", "Karaelmas",
+    "Oktay", "Ergin", "Kıvanç", "Kocaman", "Kurtuluş", "Ergün", "Şensoy", "Yılmaz", "Can", "Köse",
+    "Öztürk", "Karakaş", "Tekin", "Açıkgöz", "Gündüz", "Köksal", "Özen", "Akça", "Durmaz", "Göksel",
+    "Aktaş", "Kapıcı", "Sarı", "Kaya", "Demir", "Çelik", "Aydın", "Şahin", "Aksoy", "Ergin",
+    "Johnson", "Martinez", "Lee", "Garcia", "Zhang", "Silva", "Walker", "Nguyen", "Lopez", "Andersen",
+    "Kaya", "Hansen", "Yılmaz", "Schmidt", "Gonzalez", "Sullivan", "Sato", "Ivanov", "Tan", "Ali",
+    "O'Connor", "Sakamoto", "Smith", "Takahashi", "Wilson", "Santos", "Wang", "Peterson", "Arslan", "Fernandez",
+    "Chen", "Larsen", "Koc", "Günay", "Miller", "Erdogan", "Wu", "Alves", "Yamamoto", "Kılıç"
+]
+
+
+
+@receiver(post_migrate)
+def create_initial_cocuklar(sender, **kwargs):
+    if sender.name != 'cocuklar':  # Replace 'your_app_name' with your actual app name
+        return
+
+    for _ in range(20):
+        cocuk = Cocuklar.objects.create(
+            Adi=f"Test {random.choice(NAMES_NEW)}",
+            IkinciAdi=f"{random.choice(NAMES_NEW)}",
+            Soyadi=random.choice(SURNAMES_NEW),
+            DogumTarihi=date.today() - timedelta(days=random.randint(300, 7000)),
+            Cinsiyet=random.choice(['Erkek', 'Kız']),
+            Ulkesi=Country.objects.get(pk=randint(1, 230)),
+        )
+        cocuk.save()
+
+
+
+DOSYA_KODLARI = [
+    ('A', 'A- 3-12-1980_IADE'),
+    ('B', 'B- 3-12-1980-ILISKI'),
+    ('C', 'C- 1996'),
+    ('D', 'D- 3-13 (1980-VELAYET)'),
+    ('E', 'E- 3-12-Bilgi'),
+]
+DOSYA_KODLARI = [
+    ('A', 'A- 3-12-1980_IADE'),
+    ('B', 'B- 3-12-1980-ILISKI'),
+    ('C', 'C- 1996'),
+    ('D', 'D- 3-13 (1980-VELAYET)'),
+    ('E', 'E- 3-12-Bilgi'),
+]
+
+@receiver(post_migrate)
+def create_random_dosyalar(sender, **kwargs):
+    if sender.name != 'Dosya':  # Replace 'your_app_name' with your actual app name
+        return
+
+    for _ in range(100):
+        dosya_kodu = random.choice(DOSYA_KODLARI)
+        yil = random.randint(2020, 2023)
+        sayi = random.randint(10999, 20000)
+        aciklama = f"Rastgele açıklama {_}"
+        dosya_acilis_tarihi = date.today() - timedelta(days=random.randint(100, 1000))
+        dosya_durumu = random.choice(['Açık', 'Kapalı', 'Arşiv'])
+        dosya_kapanis_tarihi = None
+
+        # if dosya_durumu == 'Kapalı':
+        #     dosya_kapanis_tarihi = date.today() - timedelta(days=random.randint(365, 700))
+        #
+
+        if dosya_durumu == 'Kapalı':
+            dosya_kapanis_tarihi = dosya_acilis_tarihi + timedelta(days=random.randint(1, (date.today() - dosya_acilis_tarihi).days - 1))
+
+        dosya = Dosya.objects.create(
+            dosya_kodu=dosya_kodu[0],
+            yil=yil,
+            sayi=sayi,
+            aciklama=aciklama,
+            DosyaAcilisTarihi=dosya_acilis_tarihi,
+            DosyaDurumu=dosya_durumu,
+            DosyaKapatmaTarihi=dosya_kapanis_tarihi
+        )
+
+        dosya.Cocuklar.set(random.sample(list(Cocuklar.objects.all()), random.randint(1, 15)))  # Assuming you have a Cocuklar queryset
+
+        dosya.save()
+
+@receiver(post_migrate)
+def create_initial_kisiler(sender, **kwargs):
+    if sender.name != 'kisiler':  # Replace 'your_app_name' with your actual app name
+        return
+
+    for _ in range(20):
+        kisi = Kisiler.objects.create(
+            Adi=f"Test {random.choice(NAMES_NEW)}",
+            IkinciAdi=f"{random.choice(NAMES_NEW)}",
+            Soyadi=random.choice(SURNAMES_NEW),
+            DogumTarihi=date.today() - timedelta(days=random.randint(9125, 20175)),
+            Cinsiyet=random.choice(['Erkek', 'Kız']),
+            Ulkesi=Country.objects.get(pk=randint(1, 230)),
+        )
+        kisi.save()
+
+
+KURUM_LIST = [
+    "Ankara 1. Asliye Hukuk Mahkemesi ", "Ankara Cumhuriyet Başsavcılığı", "Aile Bakanlığı", "Dışişliği Bakanlığı", "Almanya Merkezi Makamı"
+]
+
+
+@receiver(post_migrate)
+def create_initial_kurumlar(sender, **kwargs):
+    if sender.name != 'kurumlar':  # Replace 'your_app_name' with your actual app name
+        return
+
+    for _ in range(5):
+        kurum = Kurumlar.objects.create(
+            KurumAdi =f"Test {random.choice(KURUM_LIST)}",
+            KurumTuru = KurumTurleri.objects.first(),  # Assuming you have a Country object to associate
+            State = State.objects.first(),  # Assuming you have a Country object to associate
+            City =City.objects.first(),  # Assuming you have a Country object to associate
+            Country=Country.objects.first(),  # Assuming you have a Country object to associate
+        )
+        kurum.save()
 
 @receiver(pre_migrate)
 def import_initial_data(sender, **kwargs):
@@ -321,7 +462,7 @@ def create_initial_data(sender, **kwargs):
             'Dışişleri Bakanlığı',
             'İçişleri Bakanlığı',
             'Aile Bakanlığı',
-            '... Bakanlığı',
+            'Diğer Bakanlık',
             'Savcılık',
             'Aile Mahkemesi',
             'Asliye Hukuk Mahkemesi',
@@ -330,6 +471,7 @@ def create_initial_data(sender, **kwargs):
             'İcra Müdürlüğü',
             'Yargıtay',
             'Mahkemesi',
+            'Şahıs'
         ]
 
         max_retry = 10  # Set the maximum number of retries

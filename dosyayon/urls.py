@@ -5,7 +5,7 @@ from django.conf.urls.static import static
 from django.urls import path, include
 from django.contrib import admin
 
-from .views import CocuklarAutocomplete, KisilerAutocomplete, generate_pdf
+from .views import CocuklarAutocomplete, KisilerAutocomplete, generate_pdf, CountryAutocomplete, StateAutocomplete, CityAutocomplete
 from django.views.generic import TemplateView
 
 from cocuklar.views import dosya_duzenle
@@ -25,6 +25,11 @@ urlpatterns = [
     # path("todo/", include("todo.urls")),
     path('cocuklar/', include('cocuklar.urls')),
     path('Dosya/', include('Dosya.urls')),
+
+    path('CountryAutocomplete/', CountryAutocomplete.as_view(), name='CountryAutocomplete'),
+    path('StateAutocomplete/', StateAutocomplete.as_view(), name='StateAutocomplete'),
+    path('CityAutocomplete/', CityAutocomplete.as_view(), name='CityAutocomplete'),
+
 
 ]
 if settings.DEBUG:

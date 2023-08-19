@@ -18,6 +18,7 @@ class CocuklarAdminForm(forms.ModelForm):
         widgets = {
             'AnneAdi': autocomplete.ModelSelect2(url='kisiler-autocomplete'),
             'BabaAdi': autocomplete.ModelSelect2(url='kisiler-autocomplete'),
+            'Ulkesi' : autocomplete.ModelSelect2(url='CountryAutocomplete'),
         }
 
 

@@ -60,7 +60,7 @@ INSTALLED_APPS = [
      'todo',
      'todo_app',
     'Dosya',
-    'Dosya.custom_filters',
+
 
 ]
 
