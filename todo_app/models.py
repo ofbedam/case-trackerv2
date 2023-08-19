@@ -3,7 +3,7 @@ from django.utils import timezone
 
 from django.db import models
 from django.urls import reverse
-from dosyalar.models import Dosyalar
+from Dosya.models import Dosya
 
 def one_week_hence():
     return timezone.now() + timezone.timedelta(days=7)
@@ -24,7 +24,7 @@ class ToDoItem(models.Model):
     description = models.TextField(null=True, blank=True, verbose_name='Açıklama')
     created_date = models.DateTimeField(auto_now_add=True, verbose_name='Oluşturma Tarihi')
     due_date = models.DateTimeField(default=one_week_hence, verbose_name='Son Tarihi')
-    dosya = models.ForeignKey(Dosyalar, on_delete=models.CASCADE)
+    dosya = models.ForeignKey(Dosya, on_delete=models.CASCADE)
     todo_list = models.ForeignKey(ToDoList, on_delete=models.CASCADE, verbose_name='Yapılacaklar Listesi')
 
     def get_absolute_url(self):

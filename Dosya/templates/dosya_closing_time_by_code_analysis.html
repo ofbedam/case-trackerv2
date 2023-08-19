@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dosya Closing Time Analysis</title>
+</head>
+<body>
+    <h1>Dosya Closing Time Analysis</h1>
+
+    {% for item in plot_data %}
+    <div class="card mt-4">
+        <div class="card-header">
+            <h2 class="card-title">Dosya Kodu: {{ item.dosya_kodu }}</h2>
+        </div>
+        <div class="card-body">
+            <img src="{{ item.plot_file_url }}" alt="Plot for {{ item.dosya_kodu }}" width="800" height="600">
+            <p>Ortalama Kapanma Süresi: {{ item.ortalama_kapanma_suresi }} gün</p>
+        </div>
+    </div>
+    {% endfor %}
+
+    <!-- ... (Bootstrap links) ... -->
+</body>
+</html>

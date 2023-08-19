@@ -20,7 +20,7 @@ urlpatterns = [
     path('kurumlar/', include('kurumlar.urls')),
     path('select2/', include('django_select2.urls')),
     path('chaining/', include('smart_selects.urls')),
-    path('dosyalar/', include('dosyalar.urls')),
+
     path("todo-app/", include("todo_app.urls")),
     # path("todo/", include("todo.urls")),
     path('cocuklar/', include('cocuklar.urls')),

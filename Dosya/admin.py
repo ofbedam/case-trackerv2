@@ -56,33 +56,36 @@ class DosyaBilgiInline(admin.StackedInline):  # veya admin.TabularInline
 #                 if existing_dosya:
 #                     raise forms.ValidationError("Bu kombinasyon zaten mevcut.")
 
+#
+# class DosyaAdminForm(forms.ModelForm):
+#     class Meta:
+#         model = Dosya
+#         fields = '__all__'
+#
+#     def clean(self):
+#         cleaned_data = super().clean()
+#         dosya_kodu = cleaned_data.get('dosya_kodu')
+#         yil = cleaned_data.get('yil')
+#         sayi = cleaned_data.get('sayi')
+#
+#         if dosya_kodu in ['A', 'B', 'C']:
+#             if yil is not None and sayi is not None:
+#                 existing_dosyalar = Dosya.objects.filter(
+#                     yil=yil,
+#                     sayi=sayi,
+#                 ).exclude(dosya_kodu=dosya_kodu)
+#
+#                 error_messages = []
+#                 for existing_dosya in existing_dosyalar:
+#                     error_messages.append(
+#                         f"[dosya_kodu= {dosya_kodu}  bir Yıl={yil} ve Sayı={sayi}] ile [dosya_kodu= {existing_dosya.dosya_kodu} Yil={existing_dosya.yil} ve Sayi={existing_dosya.sayi}] mükerrerdir."
+#                     )
+#
+#                 if error_messages:
+#                     raise forms.ValidationError(error_messages)
+#
+#
 
-class DosyaAdminForm(forms.ModelForm):
-    class Meta:
-        model = Dosya
-        fields = '__all__'
-
-    def clean(self):
-        cleaned_data = super().clean()
-        dosya_kodu = cleaned_data.get('dosya_kodu')
-        yil = cleaned_data.get('yil')
-        sayi = cleaned_data.get('sayi')
-
-        if dosya_kodu in ['A', 'B', 'C']:
-            if yil is not None and sayi is not None:
-                existing_dosyalar = Dosya.objects.filter(
-                    yil=yil,
-                    sayi=sayi,
-                ).exclude(dosya_kodu=dosya_kodu)
-
-                error_messages = []
-                for existing_dosya in existing_dosyalar:
-                    error_messages.append(
-                        f"[dosya_kodu= {dosya_kodu} Yil={yil} ve Sayi={sayi}] ile [dosya_kodu= {existing_dosya.dosya_kodu} Yil={existing_dosya.yil} ve Sayi={existing_dosya.sayi}] mükerrerdir."
-                    )
-
-                if error_messages:
-                    raise forms.ValidationError(error_messages)
 
 
 class DosyaAdminForm(forms.ModelForm):
@@ -105,7 +108,7 @@ class DosyaAdminForm(forms.ModelForm):
 
             if existing_dosya:
                 raise forms.ValidationError(
-                    f"[dosya_kodu= {dosya_kodu} Yil={yil} ve Sayi={sayi}] ile [dosya_kodu= {existing_dosya.dosya_kodu} Yil={existing_dosya.yil} ve Sayi={existing_dosya.sayi}] mükerrerdir."
+                    f"[dosya_kodu= {dosya_kodu} y={yil} / s={sayi}] ile [dosya_kodu= {existing_dosya.dosya_kodu} Yil={existing_dosya.yil} ve Sayi={existing_dosya.sayi}] mükerrerdir."
                 )
 
         elif dosya_kodu in ['D']:
@@ -117,7 +120,7 @@ class DosyaAdminForm(forms.ModelForm):
 
             if existing_dosya:
                 raise forms.ValidationError(
-                    f"[dosya_kodu= {dosya_kodu} Yil={yil} ve Sayi={sayi}] ile [dosya_kodu= {existing_dosya.dosya_kodu} Yil={existing_dosya.yil} ve Sayi={existing_dosya.sayi}] mükerrerdir."
+                    f"[dosya_kodu= {dosya_kodu} zYil={yil} ve Sayi={sayi}] ile [dosya_kodu= {existing_dosya.dosya_kodu} Yil={existing_dosya.yil} ve Sayi={existing_dosya.sayi}] mükerrerdir."
                 )
 
         elif dosya_kodu in ['E']:
@@ -129,10 +132,14 @@ class DosyaAdminForm(forms.ModelForm):
 
             if existing_dosya:
                 raise forms.ValidationError(
-                    f"[dosya_kodu= {dosya_kodu} Yil={yil} ve Sayi={sayi}] ile [dosya_kodu= {existing_dosya.dosya_kodu} Yil={existing_dosya.yil} ve Sayi={existing_dosya.sayi}] mükerrerdir."
+                    f"[dosya_kodu= {dosya_kodu}  bbb Yil={yil} ve Sayi={sayi}] ile [dosya_kodu= {existing_dosya.dosya_kodu} Yil={existing_dosya.yil} ve Sayi={existing_dosya.sayi}] mükerrerdir."
                 )
 
+        dosya_durumu = cleaned_data.get('DosyaDurumu')
+        kapatma_tarihi = cleaned_data.get('DosyaKapatmaTarihi')
 
+        if dosya_durumu == 'Kapalı' and not kapatma_tarihi:
+            raise forms.ValidationError("Dosya kapatma tarihi girilmediği halde durum 'Kapalı' olarak seçilemez.")
 @admin.register(Dosya)
 class DosyaAdmin(admin.ModelAdmin):
     form = DosyaAdminForm

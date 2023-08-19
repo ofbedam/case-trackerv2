@@ -44,9 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dosyayon',  # Burada issue_management uygulamasını ekleyin
-    'ulkeler',
+    # 'ulkeler',
     'cocuklar',
-    'dosyalar',
+    # 'dosyalar',
     'kisiler',
     'cocukkisileri',
     'yasaltemsilciler',
@@ -59,8 +59,9 @@ INSTALLED_APPS = [
     'smart_selects',
      'todo',
      'todo_app',
-    'Dosya'
-    # 'django.contrib.sites',
+    'Dosya',
+    'Dosya.custom_filters',
+
 ]
 
 SMART_SELECTS_USE_DJANGO_JQUERY = True
@@ -109,7 +110,7 @@ WSGI_APPLICATION = 'dosyayon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dosyayon11',
+        'NAME': 'dosyayon12',
         'USER': 'user1',
         'PASSWORD': '123456',
         'HOST': 'localhost',

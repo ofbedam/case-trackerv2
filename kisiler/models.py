@@ -1,6 +1,6 @@
 from django.db import models
 from yasaltemsilciler.models import YasalTemsilciler
-from ulkeler.models import Ulkeler
+
 from yerler.models import Country
 # Create your models here.
 

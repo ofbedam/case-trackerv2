@@ -1,7 +1,7 @@
 # cocuklar/models.py
 from django.db import models
 from kisiler.models import Kisiler
-from ulkeler.models import Ulkeler
+
 from yerler.models import Country
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta

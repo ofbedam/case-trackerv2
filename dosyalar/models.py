@@ -1,6 +1,6 @@
 from django.db import models
 
-from ulkeler.models import Ulkeler
+
 from kisiler.models import Kisiler
 from cocuklar.models import Cocuklar
 from yerler.models import Country

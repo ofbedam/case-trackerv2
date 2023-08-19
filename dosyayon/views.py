@@ -9,7 +9,7 @@ from reportlab.pdfgen import canvas
 
 from kisiler.models import Kisiler
 from django.views.generic import ListView
-from dosyalar.models import Dosyalar
+from Dosya.models import Dosya
 
 class KisilerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
