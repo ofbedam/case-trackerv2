@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Printable Records</title>
+</head>
+<body>
+    <h1>Printable Records</h1>
+    <table border="1">
+        <tr>
+            <th>ID</th>
+            <th>Yıl</th>
+            <th>Sayı</th>
+            <th>Dosya Durumu</th>
+            <!-- Add more headers here as needed -->
+        </tr>
+        {% for obj in queryset %}
+            <tr>
+                <td>{{ obj.id }}</td>
+                <td>{{ obj.yil }}</td>
+                <td>{{ obj.sayi }}</td>
+                <td>{{ obj.DosyaDurumu }}</td>
+                <!-- Add more columns here as needed -->
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

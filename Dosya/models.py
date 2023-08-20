@@ -54,6 +54,8 @@ class CocugaBakimTurleri(models.Model):
     class Meta:
 
         verbose_name_plural = 'Çocuğa Bakım Türleri'
+
+
 class Dosya(models.Model):
     @classmethod
     def get_latest_yil_sayi(cls, dosya_kodu):
@@ -95,9 +97,7 @@ class Dosya(models.Model):
     # Add ManyToManyField for Cocuklar
     Cocuklar = models.ManyToManyField(Cocuklar, verbose_name='Çocuk Adı', related_name='dosya')
 
-    def __str__(self):
-        cocuklar_list = ", ".join([cocuk.__str__() for cocuk in self.Cocuklar.all()])
-        return f"Dosya ID: {self.id}, Yil: {self.yil}, Sayı: {self.sayi}, Dosya Tür: {self.dosya_kodu},  Durum: {self.DosyaDurumu},Cocuklar: {cocuklar_list}"
+
 
 
     class Meta:
@@ -106,9 +106,11 @@ class Dosya(models.Model):
         unique_together = ['dosya_kodu', 'yil', 'sayi']  # Kombinasyonun benzersiz olmasını sağlar
         db_table = 'dosya_listesi'
 
-    def __str__(self):
-        return f"{self.dosya_kodu}-{self.yil}/{self.sayi}"
 
+
+    def __str__(self):
+        cocuklar_list = ", ".join([cocuk.__str__() for cocuk in self.Cocuklar.all()])
+        return f"Dosya ID: {self.id}, Yil: {self.yil}, Sayı: {self.sayi}, Dosya Tür: {self.dosya_kodu},  Durum: {self.DosyaDurumu}, Cocuklar: {cocuklar_list}"
 
 
 # çocuk iade dosyası modeli
@@ -118,7 +120,7 @@ class DosyaIade(models.Model):
 
     GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke')
     YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
-                                         related_name='yerine_getiren_dosyaiade')
+                                          related_name='yerine_getiren_dosyaiade')
     TalepEdenKurum = models.ForeignKey(Kurumlar, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
                                       related_name='talep_eden_kurum_dosyaiade',
                                        null=True, blank=True)
@@ -137,7 +139,7 @@ class DosyaIade(models.Model):
                                                           on_delete=models.CASCADE,
                                                           verbose_name='9-a-Kaçıranın çocukla yakınlığı', null=True,
                                                           blank=True)
-    notlar = models.CharField(max_length=200)
+    notlar  = models.TextField(null=True, blank=True)
     def __str__(self):
         return f"Iade - {self.dosya}"
 
@@ -281,8 +283,7 @@ class DosyaIliski(models.Model):
                                                           verbose_name='9-a-Kaçıranın çocukla yakınlığı', null=True,
                                                           blank=True)
 
-
-    notlar = models.CharField(max_length=200)
+    notlar = models.TextField(null=True, blank=True)
 
 
 

@@ -83,6 +83,7 @@ class Country(models.Model):
         managed = False
         db_table = 'yerler_countries'
         verbose_name_plural = "Ülkeler"
+        ordering = ['name']
 
 class State(models.Model):
     id = models.AutoField(primary_key=True)
@@ -104,7 +105,7 @@ class State(models.Model):
         return self.name
 
     class Meta:
-
+        ordering = ['name']
         verbose_name_plural = "Şehirler/Eyaletler"
         managed = False
         db_table = 'yerler_states'
@@ -130,3 +131,4 @@ class City(models.Model):
         verbose_name_plural = "İlçeler"
         managed = False
         db_table = 'yerler_cities'
+        ordering = ['name']
