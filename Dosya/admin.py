@@ -1,39 +1,37 @@
 from dal import autocomplete
 from django.template.loader import render_to_string
 from django.http import HttpResponse
-from reportlab.lib.pagesizes import letter
-from reportlab.pdfgen import canvas
-
+from django.contrib import admin
+from django_admin_multi_select_filter.filters import MultiSelectFieldListFilter
 from django.urls import reverse
 from django.utils.html import format_html
-
 from django.contrib import admin
 from django import forms
-
 from .models import Dosya, DosyaIliski, DosyaIade, DosyaBilgi, Dosya1996, Dosya1980Velayet, CocugaBakimTurleri, CocuklaYakinlikTurleri, MahkemeRedNedenleri, NihaiSonucTurleri, Dosya1980CK
-
 from django.contrib.admin import RelatedFieldListFilter
-
 from django.utils.translation import gettext_lazy as _
 from django.contrib.admin import SimpleListFilter
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.admin.options import ModelAdmin
-
+from django.contrib.admin.widgets import FilteredSelectMultiple
+from django.db import models
+from django.contrib.admin.views.main import ChangeList
+from django.db.models import Q
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import letter
-
 from django.utils.encoding import smart_str
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 import openpyxl as px
 from openpyxl import Workbook
-
 from yerler.models import Country
-
-
 from django.contrib.admin import RelatedFieldListFilter
+from django.db.models import F, Value
+from django.db.models.functions import Concat
 
+from django_admin_listfilter_dropdown.filters import DropdownFilter, RelatedDropdownFilter, ChoiceDropdownFilter
 
+from django_admin_multi_select_filter.filters import MultiSelectFieldListFilter
 
 class DosyaIliskiInline(admin.StackedInline):  # veya admin.TabularInline
     model = DosyaIliski  # İlgili inline model
@@ -121,12 +119,7 @@ class DosyaAdmin(admin.ModelAdmin):
     form = DosyaAdminForm
     search_fields = ['yil', 'sayi', 'Cocuklar__Adi', 'Cocuklar__Soyadi']
 
-    # def get_readonly_fields(self, request, obj=None):
-    #     readonly_fields = list(self.readonly_fields)
-    #     if obj and obj.pk:
-    #         # If object is being edited (not during creation), add DosyaTuru to readonly_fields
-    #         readonly_fields.append('DosyaTuru')
-    #     return readonly_fields
+
 
     def get_readonly_fields(self, request, obj=None):
         if obj: # editing an existing object
@@ -146,47 +139,6 @@ class DosyaAdmin(admin.ModelAdmin):
 
     get_cocuklar.short_description = 'Çocuklar'  # Set a custom column header
 
-    # class YerineGetirenUlkeFilter(SimpleListFilter):
-    #     title = _('Yerine Getiren Ülke')
-    #     parameter_name = 'yerine_getiren_ulke'
-    #
-    #     def lookups(self, request, model_admin):
-    #         queryset = model_admin.get_queryset(request)
-    #         return [(obj.yerine_getiren_dosyaiade.id, obj.yerine_getiren_dosyaiade) for obj in queryset if
-    #                 obj.yerine_getiren_dosyaiade]
-    #
-    #     def queryset(self, request, queryset):
-    #         value = self.value()
-    #         if value:
-    #             return queryset.filter(yerine_getiren_dosyaiade=value)
-
-
-    #
-    # # Define the list filter options for specific fields
-    # list_filter = [
-    #     'yil',
-    #     'dosya_kodu',
-    #     'DosyaDurumu',
-    #     # 'dosyaiade__YerineGetirenUlke',
-    #
-    #     ('dosyaiade__YerineGetirenUlke', RelatedFieldListFilter),
-    #     # 'dosyaiade__GonderenUlke',
-    #     # 'dosyailiski__GonderenUlke',
-    #     # 'dosyailiski__YerineGetirenUlke',
-    #
-    # ] # iade__YerineGetirenUlke kullanıyoruz
-    # # def get_queryset(self, request):
-    # #     queryset = super().get_queryset(request)
-    # #     return queryset.select_related(
-    # #         'dosyaiade__YerineGetirenUlke',
-    # #         'dosyaiade__GonderenUlke',
-    # #         'dosyailiski__GonderenUlke',
-    # #         'dosyailiski__YerineGetirenUlke'
-    #     )
-
-    # list_filter = [
-    #     ('dosyaiade__YerineGetirenUlke', RelatedFieldListFilter),
-    # ]
 
     class CustomRelatedFieldListFilter(RelatedFieldListFilter):
         def field_choices(self, field, request, model_admin):
@@ -196,10 +148,13 @@ class DosyaAdmin(admin.ModelAdmin):
 
 
     list_filter = [
+        ('yil'),
         ('DosyaDurumu', admin.ChoicesFieldListFilter),
         ('dosya_kodu', admin.ChoicesFieldListFilter),
-        ('dosyaiade__GonderenUlke', CustomRelatedFieldListFilter),
-        ('dosyaiade__YerineGetirenUlke', admin.RelatedFieldListFilter),
+        ('dosyaiade__GonderenUlke', RelatedDropdownFilter),
+        ('dosyaiade__YerineGetirenUlke', RelatedDropdownFilter),
+        ('dosyailiski__GonderenUlke', RelatedDropdownFilter),
+        ('dosyailiski__YerineGetirenUlke', RelatedDropdownFilter),
         # ('dosyaiade__GonderenUlke', admin.RelatedFieldListFilter),
 
     ]
@@ -214,17 +169,30 @@ class DosyaAdmin(admin.ModelAdmin):
         'aciklama',
         'iade_yerine_getiren_ulke',  # Metot tarafından döndürülen değer burada gösterilecek
         'iade_gonderen_ulke',
+        'iliski_yerine_getiren_ulke',  # Metot tarafından döndürülen değer burada gösterilecek
+        'iliski_gonderen_ulke',
+        'get_cocuklar'
     )
 
     def iade_yerine_getiren_ulke(self, obj):
         return obj.dosyaiade.YerineGetirenUlke if obj.dosyaiade else None
 
-    iade_yerine_getiren_ulke.short_description = 'İade-YG- Ülke'
+    iade_yerine_getiren_ulke.short_description = 'İade-YG-Ü'
 
     def iade_gonderen_ulke(self, obj):
         return obj.dosyaiade.GonderenUlke if obj.dosyaiade else None
 
-    iade_gonderen_ulke.short_description = 'İade-Gön.Ülke'
+    iade_gonderen_ulke.short_description = 'İade-Gön-Ü'
+
+    def iliski_yerine_getiren_ulke(self, obj):
+        return obj.dosyailiski.YerineGetirenUlke if obj.dosyailiski else None
+
+    iliski_yerine_getiren_ulke.short_description = 'İliski-YG-Ü'
+
+    def iliski_gonderen_ulke(self, obj):
+        return obj.dosyailiski.GonderenUlke if obj.dosyailiski else None
+
+    iliski_gonderen_ulke.short_description = 'İliski-Gön-Ü'
 
 
     # inlines = [DosyaIliskiInline, DosyaIadeInline, Dosya1980VelayetInline, Dosya1996Inline,DosyaBilgiInline]
@@ -402,60 +370,148 @@ class DosyaIadeForm(forms.ModelForm):
         model = DosyaIade
         fields = '__all__'
 
-# @admin.register(DosyaIade)
-# class DosyaIadeAdmin(admin.ModelAdmin):
-#     form = DosyaIadeForm
-#     fieldsets = (
-#         ('Dosya Bilgileri', {
-#             'fields': ('dosya', 'neden')
-#         }),
-#         # ('Ek Bilgiler', {
-#         #     'fields': ('diger_alan1', 'diger_alan2'),
-#         #     'classes': ('collapse',)
-#         # }),
-#     )
-#
-#     def get_form(self, request, obj=None, **kwargs):
-#         form = super().get_form(request, obj, **kwargs)
-#         if obj:
-#             form.base_fields['dosya'].disabled = True
-#         return form
-#
-#
-#
-#
-# class DosyaIadeAdminForm(forms.ModelForm):
-#     dosya_kodu = forms.ChoiceField(choices=[(dosya.dosya_kodu, str(dosya)) for dosya in Dosya.objects.all()])
-#
-#     class Meta:
-#         model = DosyaIade
-#         fields = '__all__'
-#
-# @admin.register(DosyaIade)
-# class DosyaIadeAdmin(admin.ModelAdmin):
-#     form = DosyaIadeAdminForm
 
 
-#
-# class DosyaIadeAdminForm(forms.ModelForm):
-#     yil = forms.IntegerField(widget=forms.HiddenInput())
-#
-#     sayi = forms.IntegerField()
-#     aciklama = forms.CharField(widget=forms.Textarea, required=False)
-#     neden = forms.CharField(max_length=50)
-#
-#
-#
-#     class Meta:
-#         model = DosyaIade
-#         fields = '__all__'
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.initial['yil'] = self.instance.dosya.yil  # Dosya kaydının yil alanını alıp form alanına atar
-# @admin.register(DosyaIade)
-# class DosyaIadeAdmin(admin.ModelAdmin):
-#     form = DosyaIadeAdminForm
+
+ # DOSYAIADE --- ADMIN ALANI
+
+class DosyaIadeAdminForm(forms.ModelForm):
+    class Meta:
+        model = DosyaIade
+        fields = '__all__'
+
+
+class DosyaIadeAdmin(admin.ModelAdmin):
+    form = DosyaIadeAdminForm
+    # list_display = [
+    #     'get_dosya_info',
+    #     'GonderenUlke',
+    #     'YerineGetirenUlke',
+    # ]
+    #
+    #
+    # def get_dosya_info(self, obj):
+    #     dosya = obj.dosya
+    #     cocuklar_list = ", ".join([cocuk.__str__() for cocuk in dosya.Cocuklar.all()])
+    #     return f"Dosya ID: {dosya.id}, Yil: {dosya.yil}, Sayı: {dosya.sayi}, Dosya Tür: {dosya.dosya_kodu}, Durum: {dosya.DosyaDurumu}, Cocuklar: {cocuklar_list}"
+    #
+    # get_dosya_info.short_description = 'Dosya Bilgileri'
+
+
+
+
+    # create a function in order to return a list of all DosyaIade records without exception
+
+
+
+
+    list_display = [
+        'dosya_id',
+        'dosya_yil',
+        'dosya_sayi',
+        'dosya_kodu',
+        'dosya_durumu',
+        'dosya_DosyaAcilisTarihi',
+        'dosya_DosyaKapatmaTarihi',
+        'dosya_cocuklar',
+        'f_GonderenUlke',
+        'f_YerineGetirenUlke',
+    ]
+
+# Create list_display for all
+
+
+
+    def f_GonderenUlke(self, obj):
+        return obj.GonderenUlke if obj.GonderenUlke else None
+    f_GonderenUlke.short_description = 'Gön.Ülke'
+
+    def f_YerineGetirenUlke(self, obj):
+        return obj.YerineGetirenUlke if obj.YerineGetirenUlke else None
+    f_YerineGetirenUlke.short_description = 'YG.Ülke'
+
+    def dosya_id(self, obj):
+        return obj.dosya.id
+
+    dosya_id.short_description = 'Dosya ID'
+
+    def dosya_DosyaAcilisTarihi(self, obj):
+        return obj.dosya.DosyaAcilisTarihi
+
+    dosya_DosyaAcilisTarihi.short_description = 'Aç.Tarihi'
+    def dosya_DosyaKapatmaTarihi(self, obj):
+        return obj.dosya.DosyaKapatmaTarihi
+
+    dosya_DosyaKapatmaTarihi.short_description = 'Kap.Tarihi'
+
+    def dosya_yil(self, obj):
+        return obj.dosya.yil
+
+    dosya_yil.short_description = 'Yıl'
+
+    def dosya_sayi(self, obj):
+        return obj.dosya.sayi
+
+    dosya_sayi.short_description = 'Sayı'
+
+    def dosya_kodu(self, obj):
+        return obj.dosya.dosya_kodu
+
+    dosya_kodu.short_description = 'Dosya Kodu'
+
+    def dosya_durumu(self, obj):
+        return obj.dosya.DosyaDurumu
+
+    dosya_durumu.short_description = 'Durum'
+
+    def dosya_cocuklar(self, obj):
+        return ", ".join([cocuk.__str__() for cocuk in obj.dosya.Cocuklar.all()])
+
+    dosya_cocuklar.short_description = 'Çocuklar'
+
+
+    def dosya_cocuk_adi(self, obj):
+        return ", ".join([cocuk.__str__() for cocuk in obj.dosya.Cocuklar.all()])
+
+    dosya_cocuk_adi.short_description = 'Çocuk'
+
+    list_filter = [
+        'dosya__yil',
+        'GonderenUlke',
+        'YerineGetirenUlke',
+
+    ]
+
+
+
+# Create a search function for the Cocuklar field including adi ve soyadi fields
+#     @admin.display(description='Çocuklar')
+#     def dosya_cocuklar_search(self, queryset, name, value):
+#         return queryset.filter(dosya__Cocuklar__cocuk_adi__icontains=value)
+
+    # @admin.display(description='Çocuklar')
+    # def dosya_cocuklar_search_soyadi(self, queryset, name, value):
+    #     return queryset.filter(dosya__Cocuklar__cocuk_soyadi__icontains=value)
+
+    search_fields = ['dosya__dosya_kodu', 'dosya__yil', 'dosya__sayi','dosya__Cocuklar__Adi']
+
+    # Disable add view
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+        # Disable Dosya field in the list view
+
+    def dosya(self, obj):
+        return obj.dosya.dosya_kodu
+
+admin.site.register(DosyaIade, DosyaIadeAdmin)
+
+
+
+
+
 
 
 

@@ -13,7 +13,6 @@ from kisiler.models import Kisiler
 
 
 
-
 # Register your models here.
 # Define the customized form for Dosyalar
 class DosyalarAdminForm(forms.ModelForm):
@@ -116,7 +115,7 @@ class DosyalarAdmin(admin.ModelAdmin):
 
         return response
 
-
+# create a
 
     def print_dosyalar(modeladmin, request, queryset):
         # Custom admin action for "Print"

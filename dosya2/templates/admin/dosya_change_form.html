@@ -1,0 +1,53 @@
+{% extends "admin/change_form.html" %}
+
+{% block content %}
+  <div class="latest-dosya-values" style="display: inline-block; vertical-align: top; width: 48%;">
+    <h3>En Son Dosya Değerleri:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Dosya Kodu</th>
+          <th>Dosya Adı</th>
+          <th>Yıl</th>
+          <th>Sayı</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for value in latest_values %}
+          <tr>
+            <td>{{ value.dosya_kodu }}</td>
+            <td>{{ value.dosya_kodu_adi }}</td>
+            <td>{{ value.yil }}</td>
+            <td>{{ value.sayi }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="latest-dosya-values" style="display: inline-block; vertical-align: top; width: 48%;">
+    <h3>En Son Dosya Değerleri by id:</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Dosya Kodu</th>
+          <th>Dosya Adı</th>
+          <th>Yıl</th>
+          <th>Sayı</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for value in latest_dosya_id %}
+          <tr>
+            <td>{{ value.dosya_kodu }}</td>
+            <td>{{ value.dosya_kodu_adi }}</td>
+            <td>{{ value.yil }}</td>
+            <td>{{ value.sayi }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {{ block.super }}
+{% endblock %}

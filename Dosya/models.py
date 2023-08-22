@@ -83,30 +83,21 @@ class Dosya(models.Model):
         choices=DOSYA_KODLARI,
     )
 
-
     yil = models.PositiveIntegerField( null=True, blank=True)
-
     sayi = models.PositiveIntegerField(null=True, blank=True)
     aciklama = models.TextField(null=True, blank=True)
     DosyaAcilisTarihi = models.DateField(verbose_name="Açma Tarihi")
     DosyaDurumu = models.CharField(max_length=10, choices=[('Açık', 'Açık'), ('Kapalı', 'Kapalı'), ('Arşiv', 'Arşiv')], default='Açık')
     DosyaKapatmaTarihi = models.DateField(null=True, blank=True, verbose_name="Kapatma Tarihi")
 
-
-
     # Add ManyToManyField for Cocuklar
     Cocuklar = models.ManyToManyField(Cocuklar, verbose_name='Çocuk Adı', related_name='dosya')
-
-
-
 
     class Meta:
 
         verbose_name_plural = 'dosyalar'
         unique_together = ['dosya_kodu', 'yil', 'sayi']  # Kombinasyonun benzersiz olmasını sağlar
         db_table = 'dosya_listesi'
-
-
 
     def __str__(self):
         cocuklar_list = ", ".join([cocuk.__str__() for cocuk in self.Cocuklar.all()])
@@ -118,7 +109,7 @@ class Dosya(models.Model):
 class DosyaIade(models.Model):
     dosya = models.OneToOneField(Dosya, on_delete=models.CASCADE, primary_key=True)
 
-    GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke')
+    GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke', related_name='gonderenulke_dosyaiade')
     YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
                                           related_name='yerine_getiren_dosyaiade')
     TalepEdenKurum = models.ForeignKey(Kurumlar, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
@@ -239,13 +230,7 @@ class Dosya1980CK(models.Model):
 
 
 
-
-
-
-
-
-
-
+ # ----------------------------Dosya ILISKI MODELI ALANI--------------------------------------------------------
 
 
 class DosyaIliski(models.Model):
@@ -261,7 +246,7 @@ class DosyaIliski(models.Model):
 
 
 
-    GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke')
+    GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',  related_name='gonderenulke_dosyailiski')
     YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
                                          related_name='yerine_getiren_dosyailiski')
     TalepEdenKurum = models.ForeignKey(Kurumlar, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
@@ -285,16 +270,9 @@ class DosyaIliski(models.Model):
 
     notlar = models.TextField(null=True, blank=True)
 
+ # ----------------------------Dosya ILISKI MODELI ALANI SONU--------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
+ # ----------------------------Dosya1996 MODELI ALANI -----------------------------------------------------------
 
 class Dosya1996(models.Model):
     dosya = models.OneToOneField(Dosya, on_delete=models.CASCADE, primary_key=True)
@@ -320,3 +298,5 @@ class DosyaBilgi(models.Model):
 
     def __str__(self):
         return f"Ilişki - {self.dosya}"
+
+    # ----------------------------Dosya1996 MODELI ALANI SONU----------------------------------------------------------

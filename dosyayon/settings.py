@@ -33,7 +33,7 @@ SECRET_KEY = 'django-insecure-dvi^^@zg30@t*o%xf#8(jr#@y*430il+zzj9@90@$&)lj77(uu
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['localhost']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.40']
 CSRF_TRUSTED_ORIGINS = ['http://localhost:81']
 # Application definition
 
@@ -61,6 +61,9 @@ INSTALLED_APPS = [
      'todo',
      'todo_app',
     'Dosya',
+    'dosya2',
+    'django_admin_multiple_choice_list_filter',
+    'django_admin_listfilter_dropdown',
 
 
 ]
@@ -111,7 +114,7 @@ WSGI_APPLICATION = 'dosyayon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dosyayon12',
+        'NAME': 'dosyayon15',
         'USER': 'user1',
         'PASSWORD': '123456',
         'HOST': 'localhost',

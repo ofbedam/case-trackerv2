@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="UTF-8">
+    <title>Printable Records</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Printable Records</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Yıl</th>
+            <th>Sayı</th>
+            <th>Dosya Durumu</th>
+            <!-- Add more headers here as needed -->
+        </tr>
+        {% for obj in queryset %}
+            <tr>
+                <td>{{ obj.id }}</td>
+                <td>{{ obj.yil }}</td>
+                <td>{{ obj.sayi }}</td>
+                <td>{{ obj.DosyaDurumu }}</td>
+                <!-- Add more columns here as needed -->
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+

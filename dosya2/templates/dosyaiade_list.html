@@ -1,0 +1,27 @@
+{% extends "admin/base.html" %}
+
+{% block content %}
+<div class="dosyaiade-list">
+    <h1>DosyaIade Listesi</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Dosya</th>
+                <th>Gönderen Ülke</th>
+                <th>Yerine Getiren Ülke</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in dosyaiade_records %}
+            <tr>
+                <td>{{ record.id }}</td>
+                <td>{{ record.dosya }}</td>
+                <td>{{ record.GonderenUlke }}</td>
+                <td>{{ record.YerineGetirenUlke }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

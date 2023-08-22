@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <!-- Add the following Bootstrap links -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</head>
+
+<body>
+    <h1>Dosya Kapatma Süresi Analizi</h1>
+
+<!-- ... (Bootstrap links) ... -->
+
+{% for dosya_kodu, data in plot_data.items %}
+<h2>Dosya Kodu: {{ dosya_kodu }}</h2>
+<p>Ortalama Kapanma Süresi: {{ data.ortalama_kapanma_suresi }}</p>
+<img src="{{ data.plot_file_url }}" alt="Plot for {{ dosya_kodu }}" width="800" height="600">
+
+<h3>Ayrıntılı Veriler</h3>
+<table class="table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Dosya Kodu</th>
+      <th>Yıl</th>
+      <th>Sayı</th>
+      <th>Dosya Açılış Tarihi</th>
+      <th>Dosya Kapanma Tarihi</th>
+      <th>Kapanma Süresi (gün)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for dosya in data.dosyalar %}
+    <tr>
+      <td>{{ dosya.id }}</td>
+      <td>{{ dosya.dosya_kodu }}</td>
+      <td>{{ dosya.yil }}</td>
+      <td>{{ dosya.sayi }}</td>
+      <td>{{ dosya.DosyaAcilisTarihi }}</td>
+      <td>{{ dosya.DosyaKapatmaTarihi }}</td>
+
+    <td>{{ dosya.kapanma_suresi }}</td>
+
+
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endfor %}
+
+</body>
+</html>
