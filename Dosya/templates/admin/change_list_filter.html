@@ -1,0 +1,25 @@
+{% load i18n %}
+{% load admin_list %}
+
+<div class="custom-filter{% if spec.empty %} empty{% endif %}">
+    <h3>
+        {{ spec.title }}
+        {% if spec.description %}
+            <span class="description">({{ spec.description }})</span>
+        {% endif %}
+    </h3>
+    {% if spec.filter.choices %}
+        <ul>
+            {% for choice in spec.filter.choices %}
+                <li{% if choice.selected %} class="selected"{% endif %}>
+                    <a href="{{ choice.query_string|iriencode }}">{{ choice.display }}</a>
+                    {% if choice.value == "a" %}
+                        <span class="short-name">Short A</span>
+                    {% elif choice.value == "b" %}
+                        <span class="short-name">Short B</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>

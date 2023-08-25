@@ -82,6 +82,7 @@ class Country(models.Model):
     class Meta:
         managed = False
         db_table = 'yerler_countries'
+        verbose_name = 'Ülke'
         verbose_name_plural = "Ülkeler"
         ordering = ['name']
 
@@ -106,6 +107,7 @@ class State(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name = 'Şehir/Eyalet'
         verbose_name_plural = "Şehirler/Eyaletler"
         managed = False
         db_table = 'yerler_states'
@@ -128,6 +130,7 @@ class City(models.Model):
         return self.name
 
     class Meta:
+        verbose_name = 'İlçe'
         verbose_name_plural = "İlçeler"
         managed = False
         db_table = 'yerler_cities'

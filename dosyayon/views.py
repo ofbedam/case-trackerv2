@@ -1,19 +1,18 @@
 ## dosyayon/views.py
 from django.shortcuts import render
 from dal import autocomplete
-from cocuklar.models import Cocuklar
-
+from cocuklar.models import Cocuk
 from django.http import HttpResponse
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from yerler.models import Country, State, City
-from kisiler.models import Kisiler
+from kisiler.models import Kisi
 from django.views.generic import ListView
 from Dosya.models import Dosya
 
 class KisilerAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        qs = Kisiler.objects.all()
+        qs = Kisi.objects.all()
 
         if self.q:
             qs = qs.filter(Adi__icontains=self.q)
@@ -52,7 +51,7 @@ class CityAutocomplete(autocomplete.Select2QuerySetView):
 
 class CocuklarAutocomplete(autocomplete.Select2QuerySetView):
     def get_queryset(self):
-        qs = Cocuklar.objects.all()
+        qs = Cocuk.objects.all()
 
         if self.q:
             qs = qs.filter(Adi__icontains=self.q)

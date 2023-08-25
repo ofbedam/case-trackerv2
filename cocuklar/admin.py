@@ -4,8 +4,10 @@ from dal import autocomplete
 from django import forms
 from django.contrib import admin
 from django.utils.html import format_html
-from cocuklar.models import Cocuklar
+from cocuklar.models import Cocuk
 from Dosya.models import Dosya
+from dosya2.dosyaiade.models import DosyaCKIade
+from dosya2.dosyailiski.models import DosyaCKIliski
 # Register your models here.
 
 
@@ -13,7 +15,7 @@ from django.urls import reverse
 # Define the customized form for Cocuklar
 class CocuklarAdminForm(forms.ModelForm):
     class Meta:
-        model = Cocuklar
+        model = Cocuk
         fields = '__all__'
         widgets = {
             'AnneAdi': autocomplete.ModelSelect2(url='kisiler-autocomplete'),
@@ -25,7 +27,8 @@ class CocuklarAdminForm(forms.ModelForm):
 # Register CocuklarAdmin with the customized form
 class CocuklarAdmin(admin.ModelAdmin):
     form = CocuklarAdminForm
-    search_fields = ['Adi', 'Soyadi']
+    search_fields = ['Adi', 'IkinciAdi', 'Soyadi']
+
 
 
     # def dosyalar_list(self, obj):
@@ -97,15 +100,75 @@ class CocuklarAdmin(admin.ModelAdmin):
         formatted_dosya_infos = "\n\n".join(["\n".join(info) for info in dosya_infos])
         return formatted_dosya_infos
         if not dosya_infos:
-            return "Dosya bilgisi bulunmuyor"
+            return "Dosya bilgisi bulunmuyor2"
 
         formatted_dosya_infos = "<br><br>".join(["<br>".join(info) for info in dosya_infos])
         return format_html(formatted_dosya_infos)
 
-    list_display = ['CocukID', 'Adi', 'Soyadi', 'DogumTarihi', 'calculate_age', 'calculate_age1', 'age2', 'Yas16_Tarih',
-                    'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'Ulkesi', 'dosya_list']  # Add 'age' or 'calculate_age' to display the age
+    def dosya2_iade_list(self, obj):
+        dosya2_iade_infos = []
 
-admin.site.register(Cocuklar, CocuklarAdmin)
+        for cocuk_dosya2iade in obj.cocuk_dosya2iade.all():
+            yil = cocuk_dosya2iade.yil if cocuk_dosya2iade.yil else "Bilinmiyor"
+            sayi = cocuk_dosya2iade.sayi if cocuk_dosya2iade.sayi else "Bilinmiyor"
+            id = cocuk_dosya2iade.id if cocuk_dosya2iade.id else "Bilinmiyor"
+
+            dosya2_iade_info = [
+                f"id: {id}",
+                f"Yıl: {yil}",
+                f"Sayı: {sayi}",
+            ]
+            dosya2_iade_infos.append(dosya2_iade_info)
+
+        if not dosya2_iade_infos:
+            return "Dosya2 İade bilgisi bulunmuyor"
+
+        formatted_dosya2_iade_infos = "<br><br>".join(["<br>".join(info) for info in dosya2_iade_infos])
+        return format_html(formatted_dosya2_iade_infos)
+
+    def dosya2_iliski_list(self, obj):
+        dosya2_iliski_infos = []
+
+        for cocuk_dosya2iliski in obj.cocuk_dosya2iliski.all():
+            yil = cocuk_dosya2iliski.yil if cocuk_dosya2iliski.yil else "Bilinmiyor"
+            sayi = cocuk_dosya2iliski.sayi if cocuk_dosya2iliski.sayi else "Bilinmiyor"
+            id = cocuk_dosya2iliski.id if cocuk_dosya2iliski.id else "Bilinmiyor"
+
+            dosya2_iliski_info = [
+                f"id: {id}",
+                f"Yıl: {yil}",
+                f"Sayı: {sayi}",
+            ]
+            dosya2_iliski_infos.append(dosya2_iliski_info)
+
+        if not dosya2_iliski_infos:
+            return "Dosya2 iliski bilgisi bulunmuyor"
+
+        formatted_dosya2_iliski_infos = "<br><br>".join(["<br>".join(info) for info in dosya2_iliski_infos])
+        return format_html(formatted_dosya2_iliski_infos)
+
+
+
+
+
+    list_display = ['id', 'Adi', 'IkinciAdi','Soyadi','get_cinsiyet_display_icon', 'DogumTarihi', 'calculate_age', 'calculate_age1', 'age2', 'Yas16_Tarih',
+                    'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'Ulkesi', 'dosya_list', 'dosya2_iade_list']  # Add 'age' or 'calculate_age' to display the age
+
+
+
+    def get_cinsiyet_display_icon(self, obj):
+        if obj.Cinsiyet == 'Erkek':
+            return '👦'
+        elif obj.Cinsiyet == 'Kadın':
+            return '👧️'
+        else:
+            return obj.Cinsiyet
+    get_cinsiyet_display_icon.short_description = 'Cinsiyet'
+    get_cinsiyet_display_icon.admin_order_field = 'Cinsiyet'  # Use a sorting field in model
+    get_cinsiyet_display_icon.sortable = True
+
+
+admin.site.register(Cocuk, CocuklarAdmin)
 
 # list_display = ['CocukID', 'Adi', 'Soyadi', 'DogumTarihi', 'calculate_age', 'calculate_age1', 'age2', 'Yas16_Tarih',
 #                 'Yas19_Tarih', 'BabaAdi', 'AnneAdi', 'Ulkesi',

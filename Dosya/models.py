@@ -1,10 +1,9 @@
 from django.db import models
-from kisiler.models import Kisiler
-from cocuklar.models import Cocuklar
+from kisiler.models import Kisi
+from cocuklar.models import Cocuk
 from yerler.models import Country
-from kurumlar.models import Kurumlar
+from kurumlar.models import Kurum
 import datetime
-
 
 
 
@@ -16,8 +15,8 @@ class NihaiSonucTurleri(models.Model):
         return self.adi
 
     class Meta:
-
-        verbose_name_plural = 'Nihai-Sonuç-Türleri'
+        verbose_name = 'Nihai Sonuç Türü'
+        verbose_name_plural = 'Nihai Sonuç Türleri'
 
 
 class MahkemeRedNedenleri(models.Model):
@@ -28,7 +27,7 @@ class MahkemeRedNedenleri(models.Model):
         return self.adi
 
     class Meta:
-
+        verbose_name = 'Mahkeme Red Nedeni'
         verbose_name_plural = 'Mahkeme Red Nedenleri'
 
 
@@ -40,7 +39,7 @@ class CocuklaYakinlikTurleri(models.Model):
         return self.adi
 
     class Meta:
-
+        verbose_name = 'Çocukla Kişi Arasında Yakınlık Türü'
         verbose_name_plural = 'Çocukla Yakınlık Türleri'
 
 class CocugaBakimTurleri(models.Model):
@@ -52,10 +51,10 @@ class CocugaBakimTurleri(models.Model):
 
 
     class Meta:
-
+        verbose_name = 'Çocuğa Bakım Türü'
         verbose_name_plural = 'Çocuğa Bakım Türleri'
 
-
+ # ---------------------------------DOSYA MODELİ BÖLÜMÜ --------------------------------------------------
 class Dosya(models.Model):
     @classmethod
     def get_latest_yil_sayi(cls, dosya_kodu):
@@ -88,14 +87,15 @@ class Dosya(models.Model):
     aciklama = models.TextField(null=True, blank=True)
     DosyaAcilisTarihi = models.DateField(verbose_name="Açma Tarihi")
     DosyaDurumu = models.CharField(max_length=10, choices=[('Açık', 'Açık'), ('Kapalı', 'Kapalı'), ('Arşiv', 'Arşiv')], default='Açık')
+
     DosyaKapatmaTarihi = models.DateField(null=True, blank=True, verbose_name="Kapatma Tarihi")
 
     # Add ManyToManyField for Cocuklar
-    Cocuklar = models.ManyToManyField(Cocuklar, verbose_name='Çocuk Adı', related_name='dosya')
+    Cocuklar = models.ManyToManyField(Cocuk, verbose_name='Çocuk Adı', related_name='dosya')
 
     class Meta:
 
-        verbose_name_plural = 'dosyalar'
+        verbose_name_plural = 'Dosyalar'
         unique_together = ['dosya_kodu', 'yil', 'sayi']  # Kombinasyonun benzersiz olmasını sağlar
         db_table = 'dosya_listesi'
 
@@ -104,7 +104,39 @@ class Dosya(models.Model):
         return f"Dosya ID: {self.id}, Yil: {self.yil}, Sayı: {self.sayi}, Dosya Tür: {self.dosya_kodu},  Durum: {self.DosyaDurumu}, Cocuklar: {cocuklar_list}"
 
 
-# çocuk iade dosyası modeli
+
+    def yerine_getiren_dosya_iade(self):
+        try:
+            return self.dosyaiade.YerineGetirenUlke
+        except DosyaIade.DoesNotExist:
+            return None
+
+    def yerine_getiren_dosya_iliski(self):
+        try:
+            return self.dosyailiski.YerineGetirenUlke
+        except DosyaIliski.DoesNotExist:
+            return None
+
+    def yerine_getiren_combined(self):
+        iade_ulke = self.yerine_getiren_dosya_iade()
+        iliski_ulke = self.yerine_getiren_dosya_iliski()
+
+        return f"{iade_ulke} {iliski_ulke}"
+        # return f"Iade: {iade_ulke}, Iliski: {iliski_ulke}"
+
+
+    def yerine_getiren_ulke_degeri_varmi(self):
+        if self.yerine_getiren_dosya_iade():
+            return self.yerine_getiren_dosya_iade()
+        elif self.yerine_getiren_dosya_iliski():
+            return self.yerine_getiren_dosya_iliski()
+        else:
+            return None
+
+
+ # ---------------------------------DOSYA MODELİ BÖLÜMÜ SONU --------------------------------------------------
+
+# ---------------------------------İADE MODELİ BÖLÜMÜ --------------------------------------------------
 
 class DosyaIade(models.Model):
     dosya = models.OneToOneField(Dosya, on_delete=models.CASCADE, primary_key=True)
@@ -112,31 +144,112 @@ class DosyaIade(models.Model):
     GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke', related_name='gonderenulke_dosyaiade')
     YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
                                           related_name='yerine_getiren_dosyaiade')
-    TalepEdenKurum = models.ForeignKey(Kurumlar, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
+    TalepEdenKurum = models.ForeignKey(Kurum, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
                                       related_name='talep_eden_kurum_dosyaiade',
                                        null=True, blank=True)
-    TalepEdenKurumTarih = models.DateField(null=True, blank=True)
-    TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
-    basvurucu = models.ForeignKey(Kisiler, related_name='dosyaiade_basvurucu', on_delete=models.CASCADE,
+    TalepEdenKurumTarih = models.DateField(null=True, blank=True, verbose_name='Talep Eden Kurum Evrak Tarihi')
+    TalepEdenKurumReferans = models.CharField(verbose_name='Talep Eden Kurum Evrak No', max_length=50, blank=True)
+    basvurucu = models.ForeignKey(Kisi, related_name='dosyaiade_basvurucu', on_delete=models.CASCADE,
                                   verbose_name='Başvurucu',  null=True, blank=True)
 
     BasvurucununCocugaYakinligi = models.ForeignKey(CocuklaYakinlikTurleri, related_name='dosyaiade_basvurucuyakinlik',
                                                           on_delete=models.CASCADE,
                                                           verbose_name='8-a Başvurucunun çocukla yakınlığı', null=True,
                                                           blank=True)
-    karsi_taraf = models.ForeignKey(Kisiler, related_name='dosyaiade_karsi_taraf', on_delete=models.CASCADE,
+    karsi_taraf = models.ForeignKey(Kisi, related_name='dosyaiade_karsi_taraf', on_delete=models.CASCADE,
                                     verbose_name='Karşı Taraf',  null=True, blank=True)
     KarsiTarafinCocugaYakinligi = models.ForeignKey(CocuklaYakinlikTurleri, related_name='dosyaiade_karsiyakinlik',
                                                           on_delete=models.CASCADE,
                                                           verbose_name='9-a-Kaçıranın çocukla yakınlığı', null=True,
                                                           blank=True)
     notlar  = models.TextField(null=True, blank=True)
+
+    nihai_sonuc_4a = models.ForeignKey(NihaiSonucTurleri, related_name='dosyaiade_nihaisonuc',
+                                       on_delete=models.CASCADE,
+                                       verbose_name='4-a Nihai Sonuç', null=True, blank=True)
+
+    arabuluculuk_basvuru_4b = models.CharField(verbose_name='4-b-Taraflar arabuluculuk başvurdu mu', max_length=20,
+                                               null=True,
+                                               blank=True,
+                                               choices=[('Evet', 'Evet'), ('Hayır', 'Hayır'),
+                                                        ('Bilinmiyor', 'Bilinmiyor')])
+
+    gecici_kisisel_iliski_4c = models.CharField(
+        verbose_name='4-c- Geçici kişiel ilişki emredildi mi veya kararlaştırıldı mı?', max_length=20,
+        null=True, blank=True,
+        choices=[('Evet', 'Evet'), ('Hayır', 'Hayır'), ('Bilinmiyor', 'Bilinmiyor')])
+
+    mahkeme_red_neden_5 = models.ForeignKey(MahkemeRedNedenleri, related_name='dosyaiade_mahkemeredneden',
+                                            on_delete=models.CASCADE,
+                                            verbose_name='5-Mahkeme Red Nedeni', null=True, blank=True)
+
+    basvurunun_alindigi_tarih_6a = models.DateField(verbose_name='6-a-Başvurunun Alındığı Tarih', null=True, blank=True)
+    nihai_sonuc_tarihi_6c = models.DateField(verbose_name='6-c-Nihai Sonuç Tarihi', null=True, blank=True)
+
+    karar_anlasma_yerine_6d = models.CharField(null=True, blank=True,
+                                               verbose_name='6-d-Karar yada anlaşma yerine getirildi mi??',
+                                               max_length=20, choices=[('Evet', 'Evet'), ('Hayır', 'Hayır'),
+                                                                       ('Bilinmiyor', 'Bilinmiyor')])
+
+    karar_anlasma_yerine_6e = models.DateField(verbose_name='6-e-Karar yada anlaşma yerine getirildiği tarih',
+                                               null=True, blank=True)
+
+    mahkeme_karari_temyiz_edildi_mi = models.CharField(null=True, blank=True,
+                                                       verbose_name='7-a-Mahkeme kararı temyiz edildi mi',
+                                                       max_length=20, choices=[('Evet', 'Evet'), ('Hayır', 'Hayır'),
+                                                                               ('Evet - 1 Seviye', 'Evet - 1 Seviye'),
+                                                                               ('Evet -2 Seviye', 'Evet -2 Seviye'),
+                                                                               ('Evet -3 Seviye', 'Evet -3 Seviye'),
+                                                                               ('Bilinmiyor', 'Bilinmiyor')])
+
+    evet_ise_ilk_derece_mahkemesinde_davanin_sonucu_7b = models.CharField(
+        verbose_name='7-b- Evet ise, ilk derece mahkemesinde davanın sonucu ne oldu?', max_length=40, null=True,
+        blank=True,
+        choices=[('Nihai temyizdeki sonuçla aynı', 'Nihai temyizdeki sonuçla aynı'),
+                 ('Nihai temyizdeki sonuçtan farklı', 'Nihai temyizdeki sonuçtan farklı'),
+                 ('Bilinmiyor', 'Bilinmiyor')])
+
+    ikinci_derece_mahkemenin_karar_tarihi_7d = models.DateField(
+        verbose_name='7-d-İkinci derece mahkemenin karar tarihi', null=True, blank=True)
+
+    ucuncu_derece_mahkemenin_karar_tarihi_7e = models.DateField(
+        verbose_name='7-e-Üçüncü derece mahkemenin karar tarihi', null=True, blank=True)
+
+    basvurucunun_cocukla_yakinligi_8a = models.ForeignKey(CocuklaYakinlikTurleri,
+                                                          related_name='dosyaiade_basvurucunun_cocukla_yakınlıgı',
+                                                          on_delete=models.CASCADE,
+                                                          verbose_name='8-a-Başvurucunun çocukla yakınlığı', null=True,
+                                                          blank=True)
+
+    basvurucunun_bakim_durumu_8b = models.ForeignKey(CocugaBakimTurleri,
+                                                     related_name='dosyaiade_basvurucunun_cocuga_bakimi',
+                                                     on_delete=models.CASCADE,
+                                                     verbose_name=' 8-b-Başvurucunun çocuğa bakım durumu', null=True,
+                                                     blank=True)
+
+    kaciranin_cocukla_yakinligi_9a = models.ForeignKey(CocuklaYakinlikTurleri,
+                                                       related_name='dosyaiade_kaciranin_cocukla_yakinligi',
+                                                       on_delete=models.CASCADE,
+                                                       verbose_name='9-a-Kaçıranın çocukla yakınlığı', null=True,
+                                                       blank=True)
+
+    kaciranin_bakim_durumu_9b = models.ForeignKey(CocugaBakimTurleri,
+                                                  related_name='dosyaiade_kaciranin_cocuga_bakimi',
+                                                  on_delete=models.CASCADE,
+                                                  verbose_name=' 9-b-Kaçıranın çocuğa bakım durumu', null=True,
+                                                  blank=True)
+
+    diger_aciklamalar_11 = models.CharField(verbose_name='11-Diğer Açıklamalar?', max_length=200, null=True,
+                                            blank=True)
+
     def __str__(self):
         return f"Iade - {self.dosya}"
 
     class Meta:
-
+        verbose_name = 'Çocuk İade Dosyası'
         verbose_name_plural = 'Çocuk İade Dosyaları'
+
+    # ---------------------------------DOSYA MODELİ BÖLÜMÜ SONU --------------------------------------------------
 
     ######### Talep1980CK DOSYA TÜRÜNE ÖZGÜ ALANLAR  ############
 
@@ -144,7 +257,7 @@ class DosyaIade(models.Model):
 
 
 
-# çocuk iade dosyası modeli sonu
+# çocuk dosyaiade dosyası modeli sonu
 
 
 class Dosya1980CK(models.Model):
@@ -242,6 +355,7 @@ class DosyaIliski(models.Model):
         return f"Ilişki - {self.dosya}"
 
     class Meta:
+        verbose_name = 'Çocukla Kişisel İlişki Dosyası'
         verbose_name_plural = 'Kişisel İlişki Dosyaları'
 
 
@@ -249,19 +363,19 @@ class DosyaIliski(models.Model):
     GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',  related_name='gonderenulke_dosyailiski')
     YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
                                          related_name='yerine_getiren_dosyailiski')
-    TalepEdenKurum = models.ForeignKey(Kurumlar, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
+    TalepEdenKurum = models.ForeignKey(Kurum, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
                                       related_name='talep_eden_kurum_dosyailiski',
                                        null=True, blank=True)
     TalepEdenKurumTarih = models.DateField(null=True, blank=True)
     TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
-    basvurucu = models.ForeignKey(Kisiler, related_name='dosyailiski_basvurucu', on_delete=models.CASCADE,
+    basvurucu = models.ForeignKey(Kisi, related_name='dosyailiski_basvurucu', on_delete=models.CASCADE,
                                   verbose_name='Başvurucu',  null=True, blank=True)
 
     BasvurucununCocugaYakinligi = models.ForeignKey(CocuklaYakinlikTurleri, related_name='dosyailiski_basvurucuyakinlik',
                                                           on_delete=models.CASCADE,
                                                           verbose_name='8-a Başvurucunun çocukla yakınlığı', null=True,
                                                           blank=True)
-    karsi_taraf = models.ForeignKey(Kisiler, related_name='dosyailiski_karsi_taraf', on_delete=models.CASCADE,
+    karsi_taraf = models.ForeignKey(Kisi, related_name='dosyailiski_karsi_taraf', on_delete=models.CASCADE,
                                     verbose_name='Karşı Taraf',  null=True, blank=True)
     KarsiTarafinCocugaYakinligi = models.ForeignKey(CocuklaYakinlikTurleri, related_name='dosyailiski_karsiyakinlik',
                                                           on_delete=models.CASCADE,
@@ -272,23 +386,75 @@ class DosyaIliski(models.Model):
 
  # ----------------------------Dosya ILISKI MODELI ALANI SONU--------------------------------------------------------
 
+
+
  # ----------------------------Dosya1996 MODELI ALANI -----------------------------------------------------------
 
 class Dosya1996(models.Model):
     dosya = models.OneToOneField(Dosya, on_delete=models.CASCADE, primary_key=True)
-    adi = models.CharField(max_length=50)
-    # Diğer alanlar eklenebilir
+    GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke', related_name='gonderenulke_dosya1996')
+    YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
+                                          related_name='yerine_getiren_dosya1996')
+    TalepEdenKurum = models.ForeignKey(Kurum, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
+                                      related_name='talep_eden_kurum_dosya1996',
+                                       null=True, blank=True)
+    TalepEdenKurumTarih = models.DateField(null=True, blank=True)
+    TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
+    basvurucu = models.ForeignKey(Kisi, related_name='dosya1996_basvurucu', on_delete=models.CASCADE,
+                                  verbose_name='Başvurucu',  null=True, blank=True)
 
+    BasvurucununCocugaYakinligi = models.ForeignKey(CocuklaYakinlikTurleri, related_name='dosya1996_basvurucuyakinlik',
+                                                          on_delete=models.CASCADE,
+                                                          verbose_name='8-a Başvurucunun çocukla yakınlığı', null=True,
+                                                          blank=True)
+    karsi_taraf = models.ForeignKey(Kisi, related_name='dosya1996_karsi_taraf', on_delete=models.CASCADE,
+                                    verbose_name='Karşı Taraf',  null=True, blank=True)
+    KarsiTarafinCocugaYakinligi = models.ForeignKey(CocuklaYakinlikTurleri, related_name='dosya1996_karsiyakinlik',
+                                                          on_delete=models.CASCADE,
+                                                          verbose_name='9-a-Kaçıranın çocukla yakınlığı', null=True,
+                                                          blank=True)
+    notlar  = models.TextField(null=True, blank=True)
     def __str__(self):
-        return f"Ilişki - {self.dosya}"
+        return f"1996 - {self.dosya}"
+
+    class Meta:
+        verbose_name = '1996 Dosyası'
+        verbose_name_plural = '1996 Dosyaları'
+
 
 class Dosya1980Velayet(models.Model):
     dosya = models.OneToOneField(Dosya, on_delete=models.CASCADE, primary_key=True)
-    adi = models.CharField(max_length=50)
-    # Diğer alanlar eklenebilir
+
+    GonderenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Gönderen Ülke',
+                                     related_name='gonderenulke_dosyavelayet')
+    YerineGetirenUlke = models.ForeignKey(Country, on_delete=models.CASCADE, verbose_name='Yerine Getiren Ülke',
+                                          related_name='yerine_getiren_dosyavelayet')
+    TalepEdenKurum = models.ForeignKey(Kurum, on_delete=models.CASCADE, verbose_name='Talep Eden Kurum',
+                                       related_name='talep_eden_kurum_dosyavelayet',
+                                       null=True, blank=True)
+    TalepEdenKurumTarih = models.DateField(null=True, blank=True)
+    TalepEdenKurumReferans = models.CharField(max_length=50, blank=True)
+    basvurucu = models.ForeignKey(Kisi, related_name='dosyavelayet_basvurucu', on_delete=models.CASCADE,
+                                  verbose_name='Başvurucu', null=True, blank=True)
+
+    BasvurucununCocugaYakinligi = models.ForeignKey(CocuklaYakinlikTurleri, related_name='dosyavelayet_basvurucuyakinlik',
+                                                    on_delete=models.CASCADE,
+                                                    verbose_name='8-a Başvurucunun çocukla yakınlığı', null=True,
+                                                    blank=True)
+    karsi_taraf = models.ForeignKey(Kisi, related_name='dosyavelayet_karsi_taraf', on_delete=models.CASCADE,
+                                    verbose_name='Karşı Taraf', null=True, blank=True)
+    KarsiTarafinCocugaYakinligi = models.ForeignKey(CocuklaYakinlikTurleri, related_name='dosyavelayet_karsiyakinlik',
+                                                    on_delete=models.CASCADE,
+                                                    verbose_name='9-a-Kaçıranın çocukla yakınlığı', null=True,
+                                                    blank=True)
+    notlar = models.TextField(null=True, blank=True)
 
     def __str__(self):
-        return f"Ilişki - {self.dosya}"
+        return f"1980Velayet - {self.dosya}"
+
+    class Meta:
+        verbose_name = '1980 Velayet Dosyası'
+        verbose_name_plural = '1980 Velayet Dosyaları'
 
 
 class DosyaBilgi(models.Model):
@@ -297,6 +463,9 @@ class DosyaBilgi(models.Model):
     # Diğer alanlar eklenebilir
 
     def __str__(self):
-        return f"Ilişki - {self.dosya}"
+        return f"Bilgi - {self.dosya}"
+    class Meta:
+        verbose_name = 'Bilgi Dosyası'
+        verbose_name_plural = 'Bilgi Dosyası'
 
     # ----------------------------Dosya1996 MODELI ALANI SONU----------------------------------------------------------

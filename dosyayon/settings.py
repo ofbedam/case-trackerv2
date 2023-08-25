@@ -33,8 +33,8 @@ SECRET_KEY = 'django-insecure-dvi^^@zg30@t*o%xf#8(jr#@y*430il+zzj9@90@$&)lj77(uu
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.40']
-CSRF_TRUSTED_ORIGINS = ['http://localhost:81']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.40', '10.106.234.172', '10.106.234.172:81']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:81', 'http://10.106.234.172:81']
 # Application definition
 
 INSTALLED_APPS = [
@@ -45,11 +45,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dosyayon',  # Burada issue_management uygulamasını ekleyin
-    # 'ulkeler',
+
     'cocuklar',
-    # 'dosyalar',
+
     'kisiler',
-    'cocukkisileri',
     'yasaltemsilciler',
     'kurumlar',
     'yerler',
@@ -58,8 +57,7 @@ INSTALLED_APPS = [
     'dal_select2',
     'django_select2',
     'smart_selects',
-     'todo',
-     'todo_app',
+    'todo',
     'Dosya',
     'dosya2',
     'django_admin_multiple_choice_list_filter',
@@ -114,7 +112,7 @@ WSGI_APPLICATION = 'dosyayon.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'dosyayon15',
+        'NAME': 'dosyayon12',
         'USER': 'user1',
         'PASSWORD': '123456',
         'HOST': 'localhost',

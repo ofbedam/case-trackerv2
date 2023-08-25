@@ -1,11 +1,11 @@
 from django.contrib import admin
-from .models import  Cocuklar
+from .models import  Cocuk
 from dal import autocomplete
 from django import forms
 
 class CocuklarAdminForm(forms.ModelForm):
     class Meta:
-        model = Cocuklar
+        model = Cocuk
         fields = '__all__'
         widgets = {
             'AnneAdi': autocomplete.ModelSelect2(url='kisiler-autocomplete'),

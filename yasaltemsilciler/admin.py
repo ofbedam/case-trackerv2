@@ -1,7 +1,7 @@
 from django.contrib import admin
-from yasaltemsilciler.models import YasalTemsilciler
+from .models import YasalTemsilci
 # Register your models here.
 
 # Register Ulkeler, Kisiler, YasalTemsilciler models without customization
 
-admin.site.register(YasalTemsilciler)
+admin.site.register(YasalTemsilci)

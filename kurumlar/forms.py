@@ -4,7 +4,7 @@
 from django import forms
 from dal import autocomplete
 from yerler.models import Country, State, City
-from .models import Kurumlar
+from .models import Kurum
 
 class KurumlarForm(forms.ModelForm):
     Country = forms.ModelChoiceField(
@@ -29,5 +29,5 @@ class KurumlarForm(forms.ModelForm):
     )
 
     class Meta:
-        model = Kurumlar
+        model = Kurum
         fields = "__all__"

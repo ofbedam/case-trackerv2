@@ -8,7 +8,7 @@ from django.contrib import admin
 from .views import CocuklarAutocomplete, KisilerAutocomplete, generate_pdf, CountryAutocomplete, StateAutocomplete, CityAutocomplete
 from django.views.generic import TemplateView
 
-from cocuklar.views import dosya_duzenle
+
 
 
 urlpatterns = [
@@ -21,7 +21,7 @@ urlpatterns = [
     path('select2/', include('django_select2.urls')),
     path('chaining/', include('smart_selects.urls')),
 
-    path("todo-app/", include("todo_app.urls")),
+    # path("todo-app/", include("todo_app.urls")),
     # path("todo/", include("todo.urls")),
     path('cocuklar/', include('cocuklar.urls')),
     path('Dosya/', include('Dosya.urls')),

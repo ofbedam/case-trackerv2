@@ -7,8 +7,11 @@ import matplotlib as mpl
 import numpy as np
 import json
 from django.db import models
-
+from kisiler.models import Kisi
 from datetime import datetime
+from django.shortcuts import render
+from dal import autocomplete
+
 
 
 mpl.use('Agg')  # Matplotlib'ı GUI modunda başlatmadan kullanmak için

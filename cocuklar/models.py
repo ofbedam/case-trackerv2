@@ -1,23 +1,22 @@
 # cocuklar/models.py
 from django.db import models
-from kisiler.models import Kisiler
+from kisiler.models import Kisi
 
 from yerler.models import Country
 from datetime import date, timedelta
 from dateutil.relativedelta import relativedelta
-class Cocuklar(models.Model):
-    CocukID = models.AutoField(primary_key=True)
+class Cocuk(models.Model):
     Adi = models.CharField(max_length=100)
     IkinciAdi = models.CharField(max_length=100, blank=True, null=True)
     Soyadi = models.CharField(max_length=100)
     DogumTarihi = models.DateField(blank=True, null=True)
-    Cinsiyet = models.CharField(max_length=10, choices=[('Erkek', 'Erkek'), ('Kız', 'Kız')], blank=True, null=True)
+    Cinsiyet = models.CharField(max_length=10, choices=[('Erkek', 'Erkek'), ('Kadın', 'Kadın')], blank=True, null=True)
 
-    AnneAdi = models.ForeignKey(Kisiler, related_name='annesi', on_delete=models.CASCADE,
-                                    verbose_name='Annesinin Adı', db_column='AnneAdi', null=True, blank=True)
+    AnneAdi = models.ForeignKey(Kisi, related_name='annesi', on_delete=models.CASCADE,
+                                    verbose_name='Annesinin Adı', null=True, blank=True)
 
 
-    BabaAdi = models.ForeignKey(Kisiler, on_delete=models.CASCADE, related_name='babasi', null=True, blank=True)
+    BabaAdi = models.ForeignKey(Kisi, on_delete=models.CASCADE, related_name='babasi', null=True, blank=True)
 
     IletisimBilgileri = models.TextField(blank=True, null=True)
     Notlar = models.TextField(blank=True, null=True)
@@ -26,8 +25,10 @@ class Cocuklar(models.Model):
     #dosyalar = models.ManyToManyField('Dosyalar', verbose_name='Çocuğa İlişkin Dosyalar', related_name='cocuklar')
 
     def __str__(self):
-        return f"{self.Adi} {self.Soyadi}"
+        # return f"{self.Adi} {self.IkinciAdi} {self.Soyadi}"
 
+        full_name = ' '.join(filter(None, [self.Adi, self.IkinciAdi, self.Soyadi]))
+        return full_name or "İsimsiz Çocuk"
     class Meta:
         db_table = 'Cocuklar'
         verbose_name_plural = "Çocuklar"
@@ -70,7 +71,7 @@ class Cocuklar(models.Model):
                 months -= 1
                 days += 30  # Assuming every month has 30 days for simplicity
 
-            return f"{age} years, {months} months, {days} days"
+            return f"{age} yıl, {months} ay, {days} gün"
         return None
 
         # Method to calculate the date when the Cocuk reaches 16 years old
